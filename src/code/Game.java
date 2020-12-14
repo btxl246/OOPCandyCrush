@@ -1,8 +1,7 @@
 package code;
 
-import code.ui.UI;
-
 import javax.swing.*;
+import code.ui.*;
 
 public class Game {
 	public static void main(String[] args) {
