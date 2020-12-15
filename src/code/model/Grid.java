@@ -25,7 +25,7 @@ public class Grid {
 
 			// Load the tile images.
 			for (int i = 0; i < MAX_TILES; i++) {
-				tileFileNames.add("images/" + i + ".jpg");	// Add the names.
+				tileFileNames.add("images/" + i + ".jpg");	// Add the file names for the tiles.
 			}
 			for (int y = 0; y < rows; y++) {
 				ArrayList<String> thisRow = new ArrayList<>();	// Initialize a new ArrayList of names.
@@ -77,7 +77,7 @@ public class Grid {
 	}
 
 	/**
-	 * The exchange() method checks if there is a match to remove the Points.
+	 * The exchange() method switches the Points.
 	 * @param a The first Point.
 	 * @param b The second Point.
 	 */
@@ -158,7 +158,7 @@ public class Grid {
 	}
 
 	/**
-	 * The match() method returns the matched tiles.
+	 * The match() method returns the set of matched tiles, but does not actually check for matches.
 	 * @return The matched tiles.
 	 */
 
@@ -176,26 +176,26 @@ public class Grid {
 	 * @return True if possible.
 	 */
 
-	private boolean moreCorrectMoves(ArrayList<ArrayList<String>> grid) {
-		for (int x = 0; x < 5; x++) {
-			for (int y = 0; y < 5; y++) {
-				Point a = new Point(x - 1, y);
-				Point b = new Point(x + 1, y);
-				Point c = new Point(x, y - 1);
-				Point d = new Point(x, y + 1);
-				Point e = new Point(x + 1, y + 1);
-				Point f = new Point(x - 1, y + 1);
-				Point g = new Point(x + 1, y - 1);
-				Point h = new Point(x - 1, y - 1);
-				Point i = new Point(x + 2, y);
-				Point j = new Point(x, y + 2);
-				Point k = new Point(x - 2, y);
-				Point l = new Point(x, y - 2);
+	private boolean moreCorrectMoves(ArrayList<ArrayList<String>> grid) { //note: 5 here is the ideal size for the game, suggest changes for a dynamic grid
+		for (int x = 0; x < 5; x++) { 
+			for (int y = 0; y < 5; y++) { //After a click, check every tile for matches that consist that tile
+				Point a = new Point(x - 1, y); //UP
+				Point b = new Point(x + 1, y); //DOWN
+				Point c = new Point(x, y - 1); //LEFT
+				Point d = new Point(x, y + 1); //RIGHT
+				Point e = new Point(x + 1, y + 1); //DOWN RIGHT
+				Point f = new Point(x - 1, y + 1); //UP RIGHT
+				Point g = new Point(x + 1, y - 1); //DOWN LEFT
+				Point h = new Point(x - 1, y - 1); //UP LEFT
+				Point i = new Point(x + 2, y); //DOWN * 2
+				Point j = new Point(x, y + 2); //RIGHT *2
+				Point k = new Point(x - 2, y); //UP * 2
+				Point l = new Point(x, y - 2); //LEFT * 2
 				//System.out.println(a + ", " + b + ", " + c + ", " + d + ", " + e + ", " + f + ", " + g + ", " + h + ", " + i + ", " + j + ", " + k + ", " + l);
 
-				if (inBounds(a, grid) && inBounds (b, grid) && inBounds(c, grid) && matches(a, b, grid) && matches(a, c, grid)) { return true; }
-				if (inBounds(a, grid) && inBounds (b, grid) && inBounds(d, grid) && matches(a, b, grid) && matches(a, d, grid)) { return true; }
-				if (inBounds(c, grid) && inBounds (b, grid) && inBounds(d, grid) && matches(c, b, grid) && matches(c, d, grid)) { return true; }
+				if (inBounds(a, grid) && inBounds (b, grid) && inBounds(c, grid) && matches(a, b, grid) && matches(a, c, grid)) { return true; } //Check if the combinations consist
+				if (inBounds(a, grid) && inBounds (b, grid) && inBounds(d, grid) && matches(a, b, grid) && matches(a, d, grid)) { return true; } //of tiles that are in bounds and 
+				if (inBounds(c, grid) && inBounds (b, grid) && inBounds(d, grid) && matches(c, b, grid) && matches(c, d, grid)) { return true; } //of they match, return true
 				if (inBounds(c, grid) && inBounds (a, grid) && inBounds(d, grid) && matches(c, a, grid) && matches(c, d, grid)) { return true; }
 				if (inBounds(a, grid) && inBounds (c, grid) && inBounds(g, grid) && matches(a, c, grid) && matches(a, g, grid)) { return true; }
 				if (inBounds(a, grid) && inBounds (d, grid) && inBounds(e, grid) && matches(a, d, grid) && matches(a, e, grid)) { return true; }
@@ -220,29 +220,28 @@ public class Grid {
 	}
 
 	/**
-	 * The horizontalMatch() method records matched horizontal tiles.
-	 * @return The matched tiles.
+	 * The horizontalMatch() method checks all horizontal set of 3 tiles, and record the set of 3 that match.
+	 * @return The set of matched tiles.
 	 */
 
 	private LinkedHashSet<Point> horizontalMatch() {
 		LinkedHashSet<Point> matches = new LinkedHashSet<>();
-		int minCol = 0;
-		int maxCol = this.cols() - 3;
+		int minCol = 0; //a match might start from the left-most side of the grid
+		int maxCol = this.cols() - 3; // the last possible horizontal match would start at the right-most border minus 3
 
-		for (int row = 0; row < rows(); row++) {
-			//System.out.println("===Grid horizontalMatch(int runLength) row = " + row);
-			for (int col = minCol; col <= maxCol; col++) {	// The cols we can start checking.
-				HashSet<String> values = new HashSet<>();
-				HashSet<Point> points = new HashSet<>();
+		for (int row = 0; row < rows(); row++) { //check every row
+			for (int col = minCol; col <= maxCol; col++) {	// Check the columns that are possible to have horizontal matches
+				HashSet<String> values = new HashSet<>(); //set that contains the type of that tile, does not allow dulicates; new entry that has already existed will be overwritten
+				HashSet<Point> points = new HashSet<>(); //set that contains the coordinates of that tile, does not allow dulicates; new entry that has already existed will be overwritten
 				for (int offset = 0; offset < 3; offset++) {
 					//System.out.println("\tGrid horizontalMatch(int runLength) col = " + col + " offset = " + offset);
 					Point p = new Point(row, col + offset);
-					points.add(p);
+					points.add(p); // add the tiles to form a set of 3
 					String s = get(p);
-					values.add(s);
+					values.add(s); // add the type of the tile
 				}
-				if (values.size() == 1) {
-					matches.addAll(points);
+				if (values.size() == 1) { // if the type of the set of 3 tiles is 1 (meaning they're the same icons), then it's a legitimate match
+					matches.addAll(points); // put the set of match-3 in matches, a set of Points
 				}
 			}
 		}
@@ -251,17 +250,16 @@ public class Grid {
 	}
 
 	/**
-	 * The verticalMatch() method records matched vertical tiles.
+	 * The verticalMatch() method checks all vertical set of 3 tiles, and record the set of 3 that match.
 	 * @return The matched tiles.
 	 */
 
 	private LinkedHashSet<Point> verticalMatch() {
 		LinkedHashSet<Point> matches = new LinkedHashSet<>();
-		int minRow = 0;
-		int maxRow = rows() - 3;
+		int minRow = 0; // a match might start at the top-most row of tiles
+		int maxRow = rows() - 3; // the last possible vertical matches occurs at the bottom-most row of tiles minus 3
 
 		for (int col = 0; col < cols(); col++) {
-			//System.out.println("===Grid verticalMatch(int runLength) col = " + col);
 			for (int row = minRow; row <= maxRow; row++) {	// The rows we can start checking.
 				HashSet<String> values = new HashSet<>();
 				HashSet<Point> points = new HashSet<>();
@@ -272,7 +270,7 @@ public class Grid {
 					String s = get(p);
 					values.add(s);
 				}
-				if (values.size() == 1) {
+				if (values.size() == 1) { // again, 1 here means the set of 3 tiles is of 01 single type
 					matches.addAll(points);
 				}
 			}
@@ -334,7 +332,7 @@ public class Grid {
 	}
 
 	/**
-	 * Finding the maximum adjacent tiles
+	 * Finding the maximum adjacent tiles by checking the surrounding plus
 	 */
 
 	private HashSet<Point> maximalAdjacentRegion(Point start, ArrayList<ArrayList<String>> grid) {
@@ -362,31 +360,48 @@ public class Grid {
 
 		return matchedRegion;
 	}
+	
+	/** adjacentAndMatching() method
+	 * checks a tile p's surroundings in a plus shape to see if: 
+	 * a) if the surrounding tiles are in bounds
+	 * b) if they're the same type as p
+	 * @param p : the point inspecting (Point)
+	 * @param grid : The grid (ArrayList)
+	 */
 
 	private HashSet<Point> adjacentAndMatching(Point p, ArrayList<ArrayList<String>> grid) {
-		HashSet<Point> result = new HashSet<>();
+		HashSet<Point> result = new HashSet<>(); // result is a set of Points of surrounding tiles that match with the tile being inspected (in this case, it's p)
 		if (p != null) {
-			Point check = new Point(p.x - 1, p.y);
+			Point check = new Point(p.x - 1, p.y); // check the point above p
 			if (this.inBounds(check, grid) && this.matches(p, check, grid)) { result.add(check); }
 
-			check = new Point(p.x + 1, p.y);
+			check = new Point(p.x + 1, p.y); // check the point below p
 			if (inBounds(check, grid) && matches(p, check, grid)) { result.add(check); }
 
-			check = new Point(p.x, p.y - 1);
+			check = new Point(p.x, p.y - 1); // check the point to the left of p
 			if (inBounds(check, grid) && matches(p, check, grid)) { result.add(check); }
 
-			check = new Point(p.x, p.y + 1);
+			check = new Point(p.x, p.y + 1); // check the point to the right of p
 			if (inBounds(check, grid) && matches(p, check, grid)) { result.add(check); }
 		}
 
 		return result;
 	}
+	
+	
+	/** matches() method
+	 * Check if 2 tiles are the same type by comparing the Strings that represent their types
+	 */
 
-	private boolean matches(Point a, Point b, ArrayList<ArrayList<String>> grid) {
+	private boolean matches(Point a, Point b, ArrayList<ArrayList<String>> grid) { 
 		return grid.get(a.x).get(a.y).equals(grid.get(b.x).get(b.y));
 	}
 
-	private boolean inBounds(Point p, ArrayList<ArrayList<String>> grid) {
+	
+	/** inBounds()
+	 * Check if 2 tiles are the same type by comparing the Strings that represent their types 
+	 */
+	private boolean inBounds(Point p, ArrayList<ArrayList<String>> grid) { // Check to see if a tile is within the bounds of the grid
 		return p.x >= 0 && p.x < grid.size() && p.y >= 0 && p.y < grid.get(0).size();
 	}
 }
