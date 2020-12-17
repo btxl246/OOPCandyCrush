@@ -52,7 +52,7 @@ public class UI implements Runnable {
 		// Add a background image.
 		BufferedImage myImage = null;
 		try {
-			myImage = ImageIO.read(new File("Images/homeFrame.png"));	// The image file.
+			myImage = ImageIO.read(new File("Images/homeFrame.png"));	// The homepage image file.
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -219,7 +219,7 @@ public class UI implements Runnable {
 		for (int row = 0; row < this.model.rows(); row++) {
 			for (int col = 0; col < model.cols(); col++) {
 				JButton button = this.playGrid.get(row).get(col);
-				button.setIcon(new ImageIcon(model.get(new Point(row, col))));
+				button.setIcon(new ImageIcon(model.get(new Point(row, col)))); //Set the icon for every button (or tile) in the grid
 				button.setBackground(Color.WHITE);
 			}
 		}
@@ -300,11 +300,11 @@ public class UI implements Runnable {
 			}
 		};
 
-		return quitAction;
+		return quitAction; // quitAction of class ActionListener represents the function of quitting the game.
 	}
 
 	/**
-	 * The ImagePanel nested class set an image.
+	 * The ImagePanel nested class extends from JComponent class is a user-defined class that represents an image object, taking an image file as an argument.
 	 */
 
 	public class ImagePanel extends JComponent {

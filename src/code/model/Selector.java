@@ -18,7 +18,7 @@ public class Selector {
 	}
 
 	/**
-	 * The selectedMove() method checks if a move is correct and clear the match.
+	 * The selectedMove() method checks if a move is correct and clear the move afterwards.
 	 * @param p Either first or second selection.
 	 */
 
@@ -28,10 +28,10 @@ public class Selector {
 		}
 		else {
 			this.selectedSecond = p;
-			if (this.adjacent(selectedFirst, selectedSecond)) {
-				this.grid.exchange(selectedFirst, selectedSecond);
-				if (!grid.matchCheck()) {
-					grid.exchange(selectedFirst, selectedSecond);
+			if (this.adjacent(selectedFirst, selectedSecond)) { // if the 2 points are next to each other 
+				this.grid.exchange(selectedFirst, selectedSecond); // change their types
+				if (!grid.matchCheck()) { // then, check if the grid has any matches, if not,
+					grid.exchange(selectedFirst, selectedSecond); // the 2 types will be re-exchanged
 				}
 				/*try {
 					Thread.sleep(1000);

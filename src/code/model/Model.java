@@ -5,8 +5,8 @@ import code.ui.UI;
 import java.awt.Point;
 
 public class Model {
-	private UI observer;	// Observes UI changes.
-	private Grid grid = new Grid(5, 5);	// Grid initialization.
+	private UI observer;	// Observes the changes and display it on the UI
+	private Grid grid = new Grid(5, 5);	// Grid initialization, suggest changes to make the game dynamic instead of fixed 5x5
 	private Selector selector;	// Observes selection.
 
 	public Model() {

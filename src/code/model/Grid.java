@@ -77,7 +77,7 @@ public class Grid {
 	}
 
 	/**
-	 * The exchange() method switches the Points.
+	 * The exchange() method switches the types of the Points.
 	 * @param a The first Point.
 	 * @param b The second Point.
 	 */
