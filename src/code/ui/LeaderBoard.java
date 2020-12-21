@@ -67,7 +67,7 @@ public class LeaderBoard implements Serializable {
 			fis = new FileInputStream("D:\\leaderboard.txt");
 			ois = new ObjectInputStream(fis);
 			ArrayList<Profile> highscores = (ArrayList<Profile>) ois.readObject(); //read the file and put the Object stored in the file in another object
-			System.out.println(highscores);
+			System.out.println(highscores);									//test
 		} 
 		catch (IOException | ClassNotFoundException e) {
 			e.printStackTrace();

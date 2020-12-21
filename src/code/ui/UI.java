@@ -1,6 +1,7 @@
 package code.ui;
 
 import code.model.Model;
+import code.model.Profile;
 import code.model.Grid;
 
 import java.awt.*;
@@ -17,6 +18,7 @@ public class UI implements Runnable {
 	private Model model;	// The model.
 	private ArrayList<ArrayList<JButton>> playGrid = new ArrayList<ArrayList<JButton>>();	// The play grid.
 	private LeaderBoard lBoard = LeaderBoard.getInstance();
+	private Profile player;
 
 	private JFrame homeFrame;	// JFrame to show the home screen.
 	private JFrame playFrame;	// JFrame to show the play screen.
@@ -40,6 +42,7 @@ public class UI implements Runnable {
 	@Override
 	public void run() {
 		homeScreen();	// Show the home screen first,
+		inputNameFrame(); //Show the input player name screen,
 		playScreen();	// then the play screen.
 	}
 	
@@ -82,19 +85,19 @@ public class UI implements Runnable {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				homeFrame.dispose();			// Close the home screen.
-				playFrame.setVisible(true);		// Show the play screen.
+				inputNameFrame.setVisible(true);
 			}
 		};
 		startButton.addActionListener(startAction);		// Add the action to the button.
 
 		// The exit game/program button.
-		JButton exitButton = new JButton("Exit Game");						// Initialize a new button with a text.
-		exitButton.setFont(new Font("Candice", Font.PLAIN, 50)); 	// Set the button's font.
+		JButton exitButton = new JButton("Exit Game");							// Initialize a new button with a text.
+		exitButton.setFont(new Font("Candice", Font.PLAIN, 50)); 				// Set the button's font.
 		exitButton.setForeground(Color.WHITE);									// Set the color of the text.
 		exitButton.setBorder(BorderFactory.createEmptyBorder());				// Remove the border around the button.
 		exitButton.setFocusPainted(false);										// Remove the box around the text.
 		exitButton.setContentAreaFilled(false);									// Do not show the button.
-		exitButton.setBounds(468, 565, 338, 76);			// Set where the button is.
+		exitButton.setBounds(468, 565, 338, 76);								// Set where the button is.
 		exitButton.addActionListener(quitAction(homeFrame));					// Add the action from the quitAction() method to the button.
 
 
@@ -111,8 +114,45 @@ public class UI implements Runnable {
 	public void inputNameFrame() {
 		this.inputNameFrame = new JFrame("Input Name");
 		inputNameFrame.setSize(250,250);
-		inputNameFrame.setBackground(Color.PINK);
-		inputNameFrame.setLayout(new GridLayout(2,1));
+		//inputNameFrame.setBackground(Color.PINK);
+		inputNameFrame.setLayout(new GridLayout(3,1));
+		
+		JPanel labelPanel = new JPanel();
+		labelPanel.setBackground(Color.PINK);
+		JLabel inputNameLabel = new JLabel("Input your player name: ");
+		inputNameLabel.setFont(new Font("Candice", Font.PLAIN, 30));
+		inputNameLabel.setForeground(Color.WHITE);
+		inputNameLabel.setBorder(BorderFactory.createEmptyBorder());
+		labelPanel.add(inputNameLabel);
+
+		JTextField inputField = new JTextField(30);
+		inputField.setFont(new Font("Segoe UI", Font.PLAIN, 15));
+		
+		JButton button = new JButton("Confirm name");
+		button.setFont(new Font("Candice", Font.PLAIN, 20));
+		button.setForeground(Color.WHITE);
+		button.setBackground(Color.BLUE);
+		button.setBorder(BorderFactory.createEmptyBorder());
+		button.setFocusPainted(false);
+		
+		inputNameFrame.add(labelPanel);
+		inputNameFrame.add(inputField);
+		inputNameFrame.add(button);
+		inputNameFrame.pack();
+		inputNameFrame.setLocationRelativeTo(null);
+		
+		ActionListener startGame = new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				player = new Profile();
+				player.setName(inputField.getText());
+				System.out.println(player);										//test
+				inputNameFrame.dispose();
+				playFrame.setVisible(true);
+			}
+			
+		};
+		button.addActionListener(startGame);
 	}
 
 	/**
@@ -249,7 +289,8 @@ public class UI implements Runnable {
 				for (JButton button : al)
 					button.setEnabled(false);	// disable the tiles.
 			this.finalScore = model.score();						// Pass the score to the finalScore field.
-
+			this.player.setScore(finalScore);						// Pass the final score to the player's Profile
+			System.out.println(player);						//test
 			this.playFrame.dispose();								// Close the play frame.
 
 			// Start the game over screen.
