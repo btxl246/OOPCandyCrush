@@ -8,8 +8,16 @@ import java.util.Comparator;
 import code.model.*;
 
 public class LeaderBoard implements Serializable {
+	private static LeaderBoard lBoard;
 	private Profile player;
 	private ArrayList<Profile> leaderBoard = new ArrayList<Profile>();
+	
+	private LeaderBoard() {}
+	
+	public static LeaderBoard getInstance() {
+		if (lBoard == null) lBoard = new LeaderBoard();
+		return lBoard;
+	}
 	
 	/** considerScore() method "considers" the score whether it would be on the leader board
 	 * 
@@ -53,12 +61,12 @@ public class LeaderBoard implements Serializable {
 	 * */	
 	@SuppressWarnings("unchecked")
 	public void readData() {
-		FileInputStream fis = null;
+		FileInputStream fis = null; //to read data
 		ObjectInputStream ois = null;
 		try {
 			fis = new FileInputStream("D:\\leaderboard.txt");
 			ois = new ObjectInputStream(fis);
-			ArrayList<Profile> highscores = (ArrayList<Profile>) ois.readObject();
+			ArrayList<Profile> highscores = (ArrayList<Profile>) ois.readObject(); //read the file and put the Object stored in the file in another object
 			System.out.println(highscores);
 		} 
 		catch (IOException | ClassNotFoundException e) {

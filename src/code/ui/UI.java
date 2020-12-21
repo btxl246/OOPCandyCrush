@@ -16,11 +16,12 @@ import javax.swing.*;
 public class UI implements Runnable {
 	private Model model;	// The model.
 	private ArrayList<ArrayList<JButton>> playGrid = new ArrayList<ArrayList<JButton>>();	// The play grid.
-	private LeaderBoard lBoard = new LeaderBoard();
+	private LeaderBoard lBoard = LeaderBoard.getInstance();
 
 	private JFrame homeFrame;	// JFrame to show the home screen.
 	private JFrame playFrame;	// JFrame to show the play screen.
 	private JFrame overFrame;	// JFrame to show the game over screen.
+	private JFrame inputNameFrame; //JFrame to get player's name.
 	private JLabel yourScore;		// JLabel to show your score.
 	private JButton quitButton;		// JButton to quit current game/not play again.
 
@@ -105,6 +106,13 @@ public class UI implements Runnable {
 		homeFrame.pack();											// Pack the frame window to size.
 		homeFrame.setLocationRelativeTo(null);						// Center the frame window.
 		homeFrame.setVisible(true);									// Show the frame window.
+	}
+	
+	public void inputNameFrame() {
+		this.inputNameFrame = new JFrame("Input Name");
+		inputNameFrame.setSize(250,250);
+		inputNameFrame.setBackground(Color.PINK);
+		inputNameFrame.setLayout(new GridLayout(2,1));
 	}
 
 	/**

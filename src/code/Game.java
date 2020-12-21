@@ -9,7 +9,7 @@ public class Game {
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(new UI());
 
-		LeaderBoard highscore = new LeaderBoard();
+		LeaderBoard highscore = LeaderBoard.getInstance();
 		highscore.test();
 	}
 }
