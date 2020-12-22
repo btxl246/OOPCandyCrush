@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+
 import code.model.*;
 
 public class LeaderBoard implements Serializable {
@@ -27,7 +30,7 @@ public class LeaderBoard implements Serializable {
 			if (finalScore > leaderBoard.get(i).getScore()) {
 				leaderBoard.add(player);
 				sortData();
-				leaderBoard.remove(3); //removing the 11th-highest player
+				leaderBoard.remove(leaderBoard.size()-1); //removing the 11th-highest player
 				break;
 			}
 		}
@@ -43,7 +46,7 @@ public class LeaderBoard implements Serializable {
 	 * */
 	public void writeData() {
 		try {
-			FileOutputStream fos = new FileOutputStream("D:\\leaderboard.txt"); 
+			FileOutputStream fos = new FileOutputStream("D:\\leaderboard.csv"); 
 			ObjectOutputStream oos = new ObjectOutputStream(fos);
 			oos.writeObject(this.leaderBoard);
 			oos.flush();
@@ -59,14 +62,14 @@ public class LeaderBoard implements Serializable {
 	/** readData() method reads the ArrayList of sorted Profiles from an external file and put it in an object
 	 * 
 	 * */	
-	@SuppressWarnings("unchecked")
-	public void readData() {
+	public ArrayList<Profile> readData() {
+		ArrayList<Profile> highscores = null;
 		FileInputStream fis = null; //to read data
 		ObjectInputStream ois = null;
 		try {
-			fis = new FileInputStream("D:\\leaderboard.txt");
+			fis = new FileInputStream("D:\\leaderboard.csv");
 			ois = new ObjectInputStream(fis);
-			ArrayList<Profile> highscores = (ArrayList<Profile>) ois.readObject(); //read the file and put the Object stored in the file in another object
+			highscores = (ArrayList<Profile>) ois.readObject(); //read the file and put the Object stored in the file in another object
 			System.out.println(highscores);									//test
 		} 
 		catch (IOException | ClassNotFoundException e) {
@@ -81,6 +84,7 @@ public class LeaderBoard implements Serializable {
 				e.printStackTrace();
 			}
 		}
+		return highscores;
 	}
 	
 	public void test() {
@@ -111,6 +115,5 @@ public class LeaderBoard implements Serializable {
 		
 		System.out.println(leaderBoard);
 		this.writeData();
-		this.readData();
 	}
 }

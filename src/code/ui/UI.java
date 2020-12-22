@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.util.*;
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 
 public class UI implements Runnable {
 	private Model model;	// The model.
@@ -218,17 +219,22 @@ public class UI implements Runnable {
 		playFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);	// Close the frame window.
 		playFrame.pack();												// Pack the frame window to size.
 		playFrame.setLocationRelativeTo(null);							// Center the frame window.
-		// Notice how playFrame is not setVisible here (yet).
+		// Notice how playFrame is not setVisible here (yet).	
 	}
 
+	
 	/**
 	 * The gameOverScreen() method displays the game over screen.
 	 */
 
 	public void gameOverScreen() {
 		this.overFrame = new JFrame("GAME OVER");										// Initialize the frame with a name
-		overFrame.getContentPane().setPreferredSize(new Dimension(250, 250));	// Set the frame's size.
-		overFrame.getContentPane().setLayout(new GridLayout(3, 1));				// Set the frame's layout.
+		overFrame.getContentPane().setPreferredSize(new Dimension(500, 250));	// Set the frame's size.
+		overFrame.getContentPane().setLayout(new GridLayout(1, 2));				// Set the frame's layout.
+		
+		JPanel currentResultPanel = new JPanel();
+		currentResultPanel.setSize(250,250);
+		currentResultPanel.setLayout(new GridLayout(3,1));
 
 		// The panel to contain the "Game Over" label.
 		JPanel overPanel = new JPanel();			// Initialize the panel.
@@ -243,7 +249,8 @@ public class UI implements Runnable {
 		endResultPanel.setLayout(new GridLayout(1, 2));				// Set the panels' layout.
 		endResultPanel.setLayout(new GridBagLayout());							// Center the labels.
 		endResultPanel.setPreferredSize(new Dimension(250, 50));	// Set the panel's size.
-		endResultPanel.setBackground(Color.PINK); {
+		endResultPanel.setBackground(Color.PINK); 
+		{
 			JLabel yourScoreLabel = new JLabel("Your Score: ");					// Create a label with a text.
 			yourScoreLabel.setFont(new Font("Candice", Font.PLAIN, 30));	// Set the label's font.
 			yourScoreLabel.setForeground(Color.RED);									// Set the label's color.
@@ -251,15 +258,51 @@ public class UI implements Runnable {
 			JLabel endScore = new JLabel(String.valueOf(this.finalScore));		// Create a label with a text of the final score.
 			endScore.setFont(new Font("Candice", Font.PLAIN, 30));	// Set the label's font.
 
-			// Add the labels to the panel.
-			endResultPanel.add(yourScoreLabel);
-			endResultPanel.add(endScore);
+		// Add the labels to the panel.
+		endResultPanel.add(yourScoreLabel);
+		endResultPanel.add(endScore);
 		}
 
 		// Add the panels to the frame.
-		overFrame.add(overPanel);
-		overFrame.add(endResultPanel);
-		overFrame.add(quitButton(overFrame));	// Add a quit button to the frame.
+		currentResultPanel.add(overPanel);
+		currentResultPanel.add(endResultPanel);
+		currentResultPanel.add(quitButton(overFrame));	// Add a quit button to the frame.
+		
+		//Leader board
+		
+		player.setScore(finalScore);
+		lBoard.considerScore(player.getScore(), player);
+		lBoard.writeData();
+		ArrayList<Profile> highscoreTable = lBoard.readData();
+		
+		JPanel leaderBoard = new JPanel();
+		leaderBoard.setLayout(new GridLayout(2,1));
+		leaderBoard.setBackground(Color.PINK);
+		leaderBoard.setSize(250,250);
+		
+		JTable table = new JTable();
+		table.setFont(new Font("Candice",Font.PLAIN,15));
+		table.setBackground(Color.PINK);
+		table.setForeground(Color.WHITE);
+		
+		table.setModel(new DefaultTableModel(
+							new Object [][] {},
+				            new String [] {"Pos", "Name","Score"} ));
+		DefaultTableModel model = (DefaultTableModel)table.getModel();
+		model.addRow(new String [] {"Pos", "Name","Score"});
+		for (int row = 0; row < highscoreTable.size(); row++) {
+			Object[] newRow = new Object[]{row + 1, highscoreTable.get(row).getName(), highscoreTable.get(row).getScore()};
+			model.addRow(newRow);
+		}
+		
+		JLabel leaderBoardLabel = new JLabel("Leader Board");
+		leaderBoardLabel.setFont(new Font("Candice",Font.PLAIN,30));
+		
+		leaderBoard.add(leaderBoardLabel);
+		leaderBoard.add(table);
+		
+		overFrame.add(currentResultPanel);
+		overFrame.add(leaderBoard);
 	}
 
 	/**
