@@ -13,9 +13,11 @@ import code.model.*;
 public class LeaderBoard implements Serializable {
 	private static LeaderBoard lBoard;
 	private Profile player;
-	private ArrayList<Profile> leaderBoard = new ArrayList<Profile>();
+	private ArrayList<Profile> leaderBoard;
 	
-	private LeaderBoard() {}
+	private LeaderBoard() {
+		leaderBoard = this.readData();
+	}
 	
 	public static LeaderBoard getInstance() {
 		if (lBoard == null) lBoard = new LeaderBoard();
@@ -26,12 +28,18 @@ public class LeaderBoard implements Serializable {
 	 * 
 	 * */
 	public void considerScore(int finalScore, Profile player) {
-		for(int i = 0; i < leaderBoard.size(); i++) {
-			if (finalScore > leaderBoard.get(i).getScore()) {
-				leaderBoard.add(player);
-				sortData();
-				leaderBoard.remove(leaderBoard.size()-1); //removing the 11th-highest player
-				break;
+		if (leaderBoard.size() == 0 || leaderBoard.size() < 10) {
+			leaderBoard.add(player);
+			sortData();
+		}
+		else {
+			for(int i = 0; i < leaderBoard.size(); i++) {
+				if (finalScore > leaderBoard.get(i).getScore()) {
+					leaderBoard.add(player);
+					sortData();
+					if (leaderBoard.size() >= 10) leaderBoard.remove(10); //removing the 11th-highest player
+					break;
+				}
 			}
 		}
 	}
@@ -85,35 +93,5 @@ public class LeaderBoard implements Serializable {
 			}
 		}
 		return highscores;
-	}
-	
-	public void test() {
-		
-		Profile player1 = new Profile();
-		player1.setName("A");
-		player1.setScore(50);
-		
-		Profile player2 = new Profile();
-		player2.setName("B");
-		player2.setScore(100);
-		
-		Profile player3 = new Profile();
-		player3.setName("C");
-		player3.setScore(75);
-		
-		Profile player4 = new Profile();
-		player4.setName("D");
-		player4.setScore(80);
-		
-		this.leaderBoard.add(player1);
-		this.leaderBoard.add(player2);
-		this.leaderBoard.add(player3);
-		
-		this.sortData();
-		
-		this.considerScore(player4.getScore(), player4);
-		
-		System.out.println(leaderBoard);
-		this.writeData();
 	}
 }

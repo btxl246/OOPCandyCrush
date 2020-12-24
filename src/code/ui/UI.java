@@ -267,9 +267,9 @@ public class UI implements Runnable {
 		currentResultPanel.add(overPanel);
 		currentResultPanel.add(endResultPanel);
 		currentResultPanel.add(quitButton(overFrame));	// Add a quit button to the frame.
+
 		
 		//Leader board
-		
 		player.setScore(finalScore);
 		lBoard.considerScore(player.getScore(), player);
 		lBoard.writeData();
@@ -277,26 +277,30 @@ public class UI implements Runnable {
 		
 		JPanel leaderBoard = new JPanel();
 		leaderBoard.setLayout(new GridLayout(2,1));
-		leaderBoard.setBackground(Color.PINK);
+		leaderBoard.setBackground(Color.decode("#a82052"));
 		leaderBoard.setSize(250,250);
+		leaderBoard.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		
 		JTable table = new JTable();
 		table.setFont(new Font("Candice",Font.PLAIN,15));
-		table.setBackground(Color.PINK);
+		table.setBackground(Color.decode("#a82052"));
 		table.setForeground(Color.WHITE);
 		
 		table.setModel(new DefaultTableModel(
 							new Object [][] {},
 				            new String [] {"Pos", "Name","Score"} ));
+		
 		DefaultTableModel model = (DefaultTableModel)table.getModel();
 		model.addRow(new String [] {"Pos", "Name","Score"});
+		
 		for (int row = 0; row < highscoreTable.size(); row++) {
 			Object[] newRow = new Object[]{row + 1, highscoreTable.get(row).getName(), highscoreTable.get(row).getScore()};
 			model.addRow(newRow);
 		}
 		
-		JLabel leaderBoardLabel = new JLabel("Leader Board");
+		JLabel leaderBoardLabel = new JLabel("Leader Board", SwingConstants.CENTER);
 		leaderBoardLabel.setFont(new Font("Candice",Font.PLAIN,30));
+		leaderBoardLabel.setForeground(Color.WHITE);
 		
 		leaderBoard.add(leaderBoardLabel);
 		leaderBoard.add(table);
