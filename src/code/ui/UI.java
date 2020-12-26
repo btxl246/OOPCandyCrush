@@ -229,7 +229,7 @@ public class UI implements Runnable {
 
 	public void gameOverScreen() {
 		this.overFrame = new JFrame("GAME OVER");										// Initialize the frame with a name
-		overFrame.getContentPane().setPreferredSize(new Dimension(500, 250));	// Set the frame's size.
+		overFrame.getContentPane().setPreferredSize(new Dimension(500, 350));	// Set the frame's size.
 		overFrame.getContentPane().setLayout(new GridLayout(1, 2));				// Set the frame's layout.
 		
 		JPanel currentResultPanel = new JPanel();
@@ -278,32 +278,38 @@ public class UI implements Runnable {
 		JPanel leaderBoard = new JPanel();
 		leaderBoard.setLayout(new GridLayout(2,1));
 		leaderBoard.setBackground(Color.decode("#a82052"));
-		leaderBoard.setSize(250,250);
-		leaderBoard.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+		//leaderBoard.setPreferredSize(new Dimension(100,250));
+		leaderBoard.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 		
 		JTable table = new JTable();
 		table.setFont(new Font("Candice",Font.PLAIN,15));
 		table.setBackground(Color.decode("#a82052"));
 		table.setForeground(Color.WHITE);
+		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		table.getTableHeader().setFont(new Font("Candice", Font.PLAIN, 20));
+		table.getTableHeader().setBackground(Color.WHITE);
 		
 		table.setModel(new DefaultTableModel(
 							new Object [][] {},
 				            new String [] {"Pos", "Name","Score"} ));
 		
 		DefaultTableModel model = (DefaultTableModel)table.getModel();
-		model.addRow(new String [] {"Pos", "Name","Score"});
 		
+		//add the objects in the Arraylist to the table, row by row
 		for (int row = 0; row < highscoreTable.size(); row++) {
 			Object[] newRow = new Object[]{row + 1, highscoreTable.get(row).getName(), highscoreTable.get(row).getScore()};
 			model.addRow(newRow);
 		}
+		
+		JScrollPane tablePanel = new JScrollPane(table);
+		tablePanel.setSize(250, 100);
 		
 		JLabel leaderBoardLabel = new JLabel("Leader Board", SwingConstants.CENTER);
 		leaderBoardLabel.setFont(new Font("Candice",Font.PLAIN,30));
 		leaderBoardLabel.setForeground(Color.WHITE);
 		
 		leaderBoard.add(leaderBoardLabel);
-		leaderBoard.add(table);
+		leaderBoard.add(tablePanel);
 		
 		overFrame.add(currentResultPanel);
 		overFrame.add(leaderBoard);

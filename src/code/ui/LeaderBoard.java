@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.Comparator;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileSystemView;
 import javax.swing.table.DefaultTableModel;
 
 import code.model.*;
@@ -14,6 +15,7 @@ public class LeaderBoard implements Serializable {
 	private static LeaderBoard lBoard;
 	private Profile player;
 	private ArrayList<Profile> leaderBoard;
+	private String FILE_PATH = FileSystemView.getFileSystemView().getDefaultDirectory().getPath();
 	
 	private LeaderBoard() {
 		leaderBoard = this.readData();

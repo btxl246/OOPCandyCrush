@@ -88,4 +88,7 @@ public class Model {
 	public boolean exit() {
 		return !this.grid.moreCorrectMoves();	// (!false)
 	}
+	
+	
+	
 }
