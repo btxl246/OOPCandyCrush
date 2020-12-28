@@ -16,9 +16,13 @@ public class LeaderBoard implements Serializable {
 	private Profile player;
 	private ArrayList<Profile> leaderBoard;
 	private String FILE_PATH = FileSystemView.getFileSystemView().getDefaultDirectory().getPath();
+	private File saveFile = new File("leaderboard.csv");
 	
 	private LeaderBoard() {
-		leaderBoard = this.readData();
+		if (leaderBoard != null) {
+			leaderBoard = this.readData();
+		}
+		else leaderBoard = new ArrayList<Profile>();
 	}
 	
 	public static LeaderBoard getInstance() {
@@ -56,7 +60,7 @@ public class LeaderBoard implements Serializable {
 	 * */
 	public void writeData() {
 		try {
-			FileOutputStream fos = new FileOutputStream("D:\\leaderboard.csv"); 
+			FileOutputStream fos = new FileOutputStream(saveFile); 
 			ObjectOutputStream oos = new ObjectOutputStream(fos);
 			oos.writeObject(this.leaderBoard);
 			oos.flush();
@@ -77,7 +81,7 @@ public class LeaderBoard implements Serializable {
 		FileInputStream fis = null; //to read data
 		ObjectInputStream ois = null;
 		try {
-			fis = new FileInputStream("D:\\leaderboard.csv");
+			fis = new FileInputStream(saveFile);
 			ois = new ObjectInputStream(fis);
 			highscores = (ArrayList<Profile>) ois.readObject(); //read the file and put the Object stored in the file in another object
 			System.out.println(highscores);									//test
@@ -88,7 +92,7 @@ public class LeaderBoard implements Serializable {
 		finally {
 			try {
 				fis.close();
-				ois.close();
+				//ois.close();
 			} 
 			catch (IOException e) {
 				e.printStackTrace();
