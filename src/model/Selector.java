@@ -1,12 +1,11 @@
 package model;
 
-import javax.swing.*;
 import java.awt.*;
 
 public class Selector {
     private Point first;
     private Point second;
-    private Grid grid;
+    private final Grid grid;
 
     public Selector(Grid grid) {
         this.grid = grid;

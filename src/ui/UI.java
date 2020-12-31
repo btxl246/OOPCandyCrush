@@ -2,12 +2,16 @@ package ui;
 
 import model.Grid;
 import model.Model;
+import ui.imagePackages.Packages;
+import ui.leaderBoard.LeaderBoard;
+import ui.leaderBoard.Profile;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.table.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -19,6 +23,8 @@ import java.util.ArrayList;
 public class UI implements Runnable {
     private Packages packages;
     private Model model;
+    private Profile profile;
+    private final LeaderBoard lB = LeaderBoard.getInstance();
 
     private JFrame homeFrame;
     private JFrame playFrame;
@@ -27,13 +33,15 @@ public class UI implements Runnable {
     private JFrame playModeFrame;
     private JFrame customizeFrame;
 
+    private JPanel leaderBoardPanel;
+    private JPanel infoPanel;
     private JLabel yourScoreLabel;
 
     private JTextField rowText;
     private JTextField colText;
 
     private String playMode = "";
-    private String playerName;
+    private String playerName = "";
 
     private ArrayList<ArrayList<JButton>> playGrid;
 
@@ -41,6 +49,89 @@ public class UI implements Runnable {
     public void run() {
         setHomeFrame();
         this.homeFrame.setVisible(true);
+    }
+
+    public void setLeaderBoardPanel() {
+        this.leaderBoardPanel = new JPanel();
+        leaderBoardPanel.setLayout(new GridBagLayout());
+        leaderBoardPanel.setPreferredSize(new Dimension(700, 500));
+
+        JLabel leaderBoardLabel = new JLabel("Leader Board", SwingConstants.CENTER);
+        leaderBoardLabel.setFont(new Font("Candice",Font.PLAIN,50));
+        leaderBoardLabel.setForeground(new Color(247, 217, 76));
+        leaderBoardLabel.setOpaque(true);
+        leaderBoardLabel.setBackground(Color.decode("#a82052"));
+
+        ArrayList<Profile> leaderBoard;
+        if (this.playerName.isBlank()) {
+            leaderBoard = lB.readData();
+        }
+        else {
+            this.profile = new Profile();
+            profile.setName(playerName);
+            profile.setScore(this.model.getGrid().getTotalScore());
+            lB.considerScore(profile.getScore(), profile);
+            lB.writeData();
+            leaderBoard = lB.readData();
+        }
+
+        JTable table = new JTable() {
+            @Override
+            public void setTableHeader(JTableHeader tableHeader) {
+                tableHeader.setFont(new Font("Candice", Font.PLAIN, 25));
+                tableHeader.setForeground(new Color(109, 18, 51));
+                tableHeader.setBackground(Color.WHITE);
+                super.setTableHeader(tableHeader);
+            }
+
+            @Override
+            public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
+                Component component = super.prepareRenderer(renderer, row, column);
+                if (row == 0) {
+                    component.setBackground(Color.RED);
+                    component.setForeground(Color.WHITE);
+                }
+                else if (row == 1) {
+                    component.setBackground(Color.ORANGE);
+                    component.setForeground(Color.WHITE);
+                }
+                else if (row == 2) {
+                    component.setBackground(Color.YELLOW);
+                    component.setForeground(Color.WHITE);
+                }
+                else {
+                    component.setBackground(new Color(253, 230, 240));
+                    component.setForeground(new Color(109, 18, 51));
+                }
+
+                int rendererWidth = component.getPreferredSize().width;
+                TableColumn tableColumn = getColumnModel().getColumn(column);
+                tableColumn.setPreferredWidth(Math.max(rendererWidth + getIntercellSpacing().width, tableColumn.getPreferredWidth()));
+
+                return component;
+            }
+        };
+        table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        table.setFont(new Font("Candice",Font.PLAIN,25));
+        table.setForeground(new Color(109, 18, 51));
+        table.setBackground(new Color(253, 230, 240));
+        table.setFillsViewportHeight(true);
+        table.setRowHeight(50);
+        table.setEnabled(false);
+        table.setAutoResizeMode(JTable.AUTO_RESIZE_NEXT_COLUMN);
+        table.setModel(new DefaultTableModel(new Object [][] {}, new String [] {"Position", "Name", "Score"}));
+        DefaultTableModel model = (DefaultTableModel) table.getModel();
+        for (int row = 0; row < leaderBoard.size(); row++) {
+            Object[] newRow = new Object[]{row + 1, leaderBoard.get(row).getName(), leaderBoard.get(row).getScore()};
+            model.addRow(newRow);
+        }
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+        table.setDefaultRenderer(Object.class, centerRenderer);
+        JScrollPane tableScrollPane = new JScrollPane(table);
+
+        leaderBoardPanel.add(leaderBoardLabel, gBC(GridBagConstraints.BOTH, 0.2, 0.1, 0, 0, 1, 1));
+        leaderBoardPanel.add(tableScrollPane, gBC(GridBagConstraints.BOTH, 1, 1, 0, 1, 1, 1));
     }
 
     public void setHomeFrame() {
@@ -74,8 +165,18 @@ public class UI implements Runnable {
         exitButton.setBounds(465, 570, 338, 76);
         exitButton.addActionListener(new HomeFrameButtonListener());
 
+        JButton lBButton = new JButton("Leader Board");
+        lBButton.setFont(new Font("Candice", Font.PLAIN, 50));
+        lBButton.setForeground(Color.WHITE);
+        lBButton.setBorder(BorderFactory.createEmptyBorder());
+        lBButton.setFocusPainted(false);
+        lBButton.setContentAreaFilled(false);
+        lBButton.setBounds(homeScreen.getWidth()/2 - 319/2, 655, 319, 60);
+        lBButton.addActionListener(new HomeFrameButtonListener());
+
         homeFrame.add(startButton);
         homeFrame.add(exitButton);
+        homeFrame.add(lBButton);
 
         homeFrame.pack();
         homeFrame.setLocationRelativeTo(null);
@@ -92,6 +193,15 @@ public class UI implements Runnable {
             }
             else if (e.getActionCommand().equals("Exit"))
                 System.exit(0);
+            else if (e.getActionCommand().equals("Leader Board")) {
+                setLeaderBoardPanel();
+                JFrame frame = new JFrame("LEADER BOARD");
+                frame.add(UI.this.leaderBoardPanel);
+                frame.pack();
+                frame.setVisible(true);
+                frame.setLocationRelativeTo(null);
+                frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            }
         }
     }
 
@@ -388,14 +498,18 @@ public class UI implements Runnable {
         character.setBorder(BorderFactory.createDashedBorder(new Color(238, 77, 144), 3, 5, 1, true));
         character.setFocusPainted(false);
         character.setContentAreaFilled(false);
-        this.yourScoreLabel = new JLabel();
-        yourScoreLabel.setFont(new Font("Candice", Font.PLAIN, 25));
-        yourScoreLabel.setForeground(new Color(109, 18, 51));
-        JPanel infoPanel = new JPanel();
+        JLabel nameLabel = new JLabel(this.playerName);
+        nameLabel.setFont(new Font("Candice", Font.PLAIN, 25));
+        nameLabel.setForeground(new Color(109, 18, 51));
+        this.infoPanel = new JPanel();
         infoPanel.setBackground(new Color(253, 230, 240));
         infoPanel.setLayout(new FlowLayout());
         infoPanel.add(character);
-        infoPanel.add(yourScoreLabel);
+        infoPanel.add(nameLabel);
+
+        this.yourScoreLabel = new JLabel();
+        yourScoreLabel.setFont(new Font("Candice", Font.PLAIN, 25));
+        yourScoreLabel.setForeground(new Color(109, 18, 51));
 
         JPanel playPanel = new JPanel();
         playPanel.setLayout(new GridLayout(model.getGrid().getRows(), model.getGrid().getCols()));
@@ -467,9 +581,10 @@ public class UI implements Runnable {
         buttonPanel.add(replayButton);
         buttonPanel.add(exitButton);
 
-        model.addObserver(this);
+        model.addModelObserver(this);
 
-        playFrame.add(infoPanel, gBC(GridBagConstraints.BOTH, 1, 1, 1, 0, 1, 1));
+        playFrame.add(infoPanel, gBC(GridBagConstraints.CENTER, 0.5, 0.5, 0, 0, 1, 1));
+        playFrame.add(yourScoreLabel, gBC(GridBagConstraints.CENTER, 0.5, 0.5, 1, 0, 1, 1));
 
         playFrame.add(playPanel, gBC(GridBagConstraints.CENTER, 1, 1, 0, 1, 2, 1));
 
@@ -483,7 +598,7 @@ public class UI implements Runnable {
     public void setOverFrame() {
         this.overFrame = new JFrame("GAME OVER");
         overFrame.getContentPane().setBackground(new Color(253, 230, 240));
-        overFrame.setPreferredSize(new Dimension(500, 300));
+        overFrame.setPreferredSize(new Dimension(1000, 500));
         overFrame.setLayout(new GridBagLayout());
 
         JLabel finalScore = new JLabel("Your score: " + this.model.getGrid().getTotalScore());
@@ -550,14 +665,17 @@ public class UI implements Runnable {
                 System.exit(0);
             }
         });
-        overFrame.add(finalScore, gBC(GridBagConstraints.CENTER, 0.2, 0.1, 0, 0, 3, 1));
 
-        overFrame.add(backButton, gBC(GridBagConstraints.CENTER, 0.2, 0.05, 1, 1, 1, 1));
-        overFrame.add(replayButton, gBC(GridBagConstraints.CENTER, 0.2, 0.05, 1, 2, 1, 1));
-        overFrame.add(newButton, gBC(GridBagConstraints.CENTER, 0.2, 0.05, 1, 3, 1, 1));
-        overFrame.add(exitButton, gBC(GridBagConstraints.CENTER, 0.2, 0.05, 1, 4, 1, 1));
+        overFrame.add(this.infoPanel, gBC(GridBagConstraints.CENTER, 0.2, 0, 0, 0, 1, 1));
+        overFrame.add(finalScore, gBC(GridBagConstraints.CENTER, 0.2, 0, 0, 1, 1, 1));
 
-        overFrame.add(new JLabel("Table"), gBC(GridBagConstraints.BOTH, 1, 1, 3, 0, 1, 5));
+        overFrame.add(backButton, gBC(GridBagConstraints.CENTER, 0.2, 0.05, 0, 2, 1, 1));
+        overFrame.add(replayButton, gBC(GridBagConstraints.CENTER, 0.2, 0.05, 0, 3, 1, 1));
+        overFrame.add(newButton, gBC(GridBagConstraints.CENTER, 0.2, 0.05, 0, 4, 1, 1));
+        overFrame.add(exitButton, gBC(GridBagConstraints.CENTER, 0.2, 0.05, 0, 5, 1, 1));
+
+        setLeaderBoardPanel();
+        overFrame.add(this.leaderBoardPanel, gBC(GridBagConstraints.BOTH, 1, 1, 1, 0, 1, 6));
 
         overFrame.pack();
         overFrame.setVisible(true);
@@ -582,7 +700,7 @@ public class UI implements Runnable {
         this.yourScoreLabel.setText(String.valueOf(model.getGrid().getTotalScore()));
 
         if (model.exit()) {
-            System.out.println("UI Exit:" + model.exit());
+            System.out.println("UI exit(): " + model.exit());
             for (ArrayList<JButton> al : playGrid)
                 for (JButton button : al)
                     button.setEnabled(false);
@@ -593,8 +711,9 @@ public class UI implements Runnable {
         playFrame.repaint();
     }
 
-    public class ImagePanel extends JComponent {
-        private final Image image;	// The image.
+    public static class ImagePanel extends JComponent {
+        private final Image image;	        // The image.
+
         public ImagePanel(Image image) {	// The constructor.
             this.image = image;
         }
@@ -611,6 +730,23 @@ public class UI implements Runnable {
         }
     }
 
+    public static class EventHandler implements ActionListener {
+        private final Model model;
+        private final int x;
+        private final int y;
+
+        public EventHandler(Model model, int x, int y) {
+            this.model = model;
+            this.x = x;
+            this.y = y;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            this.model.select(this.x, this.y);
+        }
+    }
+
     public GridBagConstraints gBC(int fill, double weightx, double weighty, int gridx, int gridy, int gridwidth, int gridheight) {
         GridBagConstraints gBC = new GridBagConstraints();
         gBC.fill = fill;
@@ -620,6 +756,7 @@ public class UI implements Runnable {
         gBC.gridy = gridy;
         gBC.gridwidth = gridwidth;
         gBC.gridheight = gridheight;
+
         return gBC;
     }
 
@@ -632,8 +769,10 @@ public class UI implements Runnable {
         UIManager.put("Button.border", BorderFactory.createLineBorder(new Color(14, 123, 247), 3, true));
         UIManager.put("Button.background", new Color(0, 169, 239));
         UIManager.put("Button.foreground", Color.WHITE);
+
         Object[] options = {"Yes", "No"};
         int n = JOptionPane.showOptionDialog(null, "Are you sure?\nYou will lose your current progress.", "WARNING", JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[0]);
+
         UIManager.put("OptionPane.background", null);
         UIManager.put("Panel.background", null);
         UIManager.put("OptionPane.messageForeground", null);
@@ -642,6 +781,7 @@ public class UI implements Runnable {
         UIManager.put("Button.border", null);
         UIManager.put("Button.background", null);
         UIManager.put("Button.foreground", null);
+
         return n;
     }
 }

@@ -1,4 +1,4 @@
-package ui;
+package ui.imagePackages;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -118,10 +118,10 @@ public class Packages implements ItemListener  {
     }
 
     public String getTileChoice() {
-        return tileChoice;
+        return this.tileChoice;
     }
 
     public String getCharacterChoice() {
-        return characterChoice;
+        return this.characterChoice;
     }
 }

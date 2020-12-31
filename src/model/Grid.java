@@ -5,10 +5,11 @@ import java.util.*;
 
 public class Grid {
     private ArrayList<ArrayList<String>> grid;
-    private ArrayList<String> tiles = new ArrayList<>();
-    private Random random = new Random();
+    private final ArrayList<String> tiles = new ArrayList<>();
+    private final Random random = new Random();
     private int totalScore = 0;
     private final int NUM_TILES = 6;
+    private final int moreCorrectMoves;
 
     public Grid(int rows, int cols, String pack) {
         String type;
@@ -37,7 +38,16 @@ public class Grid {
                 }
                 System.out.println();
             }*/
-        } while (checkMatches() && moreCorrectMoves(grid));
+        } while ((checkMatches() && moreCorrectMoves(grid)) || (checkMatches() && !moreCorrectMoves(grid)) || (!checkMatches() && !moreCorrectMoves(grid)));
+
+        if (!moreCorrectMoves(grid))
+            this.moreCorrectMoves = 0;
+        else
+            moreCorrectMoves = 1;
+    }
+
+    public int getMoreCorrectMoves() {
+        return this.moreCorrectMoves;
     }
 
     public int getRows() {
@@ -162,10 +172,10 @@ public class Grid {
             }
 
             for (LinkedHashSet<Point> set : sets) {
-                System.out.println(set);
+                //System.out.println(set);
                 for (Point p : set)
                     this.totalScore += score(getIcon(p));
-                System.out.println();
+                //System.out.println();
             }
 
             for (LinkedHashSet<Point> set : sets) {
@@ -186,9 +196,9 @@ public class Grid {
             }
 
             for (Point p : newPoints) {
-                System.out.print(p + "  " + getIcon(p) + " -> ");
+                //System.out.print(p + "  " + getIcon(p) + " -> ");
                 setNewTile(p);
-                System.out.println(getIcon(p));
+                //System.out.println(getIcon(p));
             }
 
             i++;
