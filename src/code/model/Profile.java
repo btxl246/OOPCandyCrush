@@ -5,7 +5,17 @@ import java.io.Serializable;
 public class Profile implements Serializable, Comparable<Profile> {
 	private String playerName;
 	private int score;
+	private String characterChoice;
+	private int timeSurvived;
 	
+	public int getTimeSurvived() {
+		return timeSurvived;
+	}
+
+	public void setTimeSurvived(int timeSurvived) {
+		this.timeSurvived = timeSurvived;
+	}
+
 	public void setName(String name) {
 		this.playerName = name;
 	}
@@ -20,6 +30,14 @@ public class Profile implements Serializable, Comparable<Profile> {
 	
 	public int getScore() {
 		return this.score;
+	}
+	
+	public void setCharacterChoice(String character) {
+		this.characterChoice = character;
+	}
+	
+	public String getCharacterChoice() {
+		return this.characterChoice;
 	}
 	
 	public String toString() {
