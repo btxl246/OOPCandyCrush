@@ -12,22 +12,15 @@ import javax.swing.table.DefaultTableModel;
 import code.model.*;
 
 public class LeaderBoard implements Serializable {
-	private static LeaderBoard lBoard;
-	private Profile player;
 	private ArrayList<Profile> leaderBoard;
-	private String FILE_PATH = FileSystemView.getFileSystemView().getDefaultDirectory().getPath();
-	private File saveFile = new File("leaderboard.csv");
+	//private String FILE_PATH = FileSystemView.getFileSystemView().getDefaultDirectory().getPath();
+	private File saveFile = new File("out/leaderboard.csv");
 	
-	private LeaderBoard() {
-		if (leaderBoard != null) {
+	public LeaderBoard() {
+		if (saveFile.isFile()) {
 			leaderBoard = this.readData();
 		}
 		else leaderBoard = new ArrayList<Profile>();
-	}
-	
-	public static LeaderBoard getInstance() {
-		if (lBoard == null) lBoard = new LeaderBoard();
-		return lBoard;
 	}
 	
 	/** considerScore() method "considers" the score whether it would be on the leader board

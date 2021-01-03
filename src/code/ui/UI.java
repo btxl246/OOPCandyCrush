@@ -18,10 +18,11 @@ import javax.swing.table.DefaultTableModel;
 public class UI implements Runnable {
 	private Model model;	// The model.
 	private ArrayList<ArrayList<JButton>> playGrid = new ArrayList<ArrayList<JButton>>();	// The play grid.
-	private LeaderBoard lBoard = LeaderBoard.getInstance();
+	private LeaderBoard leaderboardObj = new LeaderBoard();
 	private Profile player;
 
 	private JFrame homeFrame;	// JFrame to show the home screen.
+	private JFrame leaderboardFrame; // JFrame to show the leader board.
 	private JFrame playFrame;	// JFrame to show the play screen.
 	private JFrame overFrame;	// JFrame to show the game over screen.
 	private JFrame inputNameFrame; //JFrame to get player's name.
@@ -45,6 +46,7 @@ public class UI implements Runnable {
 		homeScreen();	// Show the home screen first,
 		inputNameFrame(); //Show the input player name screen,
 		playScreen();	// then the play screen.
+		leaderboardFrame();
 	}
 	
 	public int getFinalScore() {
@@ -101,10 +103,27 @@ public class UI implements Runnable {
 		exitButton.setBounds(468, 565, 338, 76);								// Set where the button is.
 		exitButton.addActionListener(quitAction(homeFrame));					// Add the action from the quitAction() method to the button.
 
+		JButton leaderboardButton = new JButton("Leader Board");
+		leaderboardButton.setFont(new Font("Candice", Font.PLAIN, 27));	
+		leaderboardButton.setForeground(Color.WHITE);
+		leaderboardButton.setBorder(BorderFactory.createEmptyBorder());				
+		leaderboardButton.setFocusPainted(false);										
+		leaderboardButton.setContentAreaFilled(false);
+		leaderboardButton.setBounds(468, 645, 338, 76);
+		
+		ActionListener leaderboardAction = new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				homeFrame.dispose();
+				leaderboardFrame.setVisible(true);
+			}
+		};
+		leaderboardButton.addActionListener(leaderboardAction);
 
 		// Add the buttons to the home screen.
 		homeFrame.add(startButton);
 		homeFrame.add(exitButton);
+		homeFrame.add(leaderboardButton);
 
 		homeFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);	// Stop the program if the frame window is closed.
 		homeFrame.pack();											// Pack the frame window to size.
@@ -150,16 +169,75 @@ public class UI implements Runnable {
 				System.out.println(player);										//test
 				inputNameFrame.dispose();
 				playFrame.setVisible(true);
+			}	
+		};
+		button.addActionListener(startGame);
+	}
+	
+	public void leaderboardFrame() {
+		this.leaderboardFrame = new JFrame("Leader Board");
+		leaderboardFrame.setSize(400,400);
+		leaderboardFrame.setLayout(new GridLayout(0,1));
+		
+		JTable table = new JTable();
+		table.setFont(new Font("Candice",Font.PLAIN,15));
+		table.setBackground(Color.decode("#a82052"));
+		table.setForeground(Color.WHITE);
+		table.getTableHeader().setFont(new Font("Candice", Font.PLAIN, 20));
+		table.getTableHeader().setBackground(Color.WHITE);
+		
+		ArrayList<Profile> highscoreTable = leaderboardObj.readData();
+		
+		table.setModel(new DefaultTableModel(
+							new Object [][] {},
+				            new String [] {"Pos", "Name","Score"} ));
+		
+		DefaultTableModel model = (DefaultTableModel)table.getModel();
+		
+		//add the objects in the Arraylist to the table, row by row
+		for (int row = 0; row < highscoreTable.size(); row++) {
+			Object[] newRow = new Object[]{row + 1, highscoreTable.get(row).getName(), highscoreTable.get(row).getScore()};
+			model.addRow(newRow);
+		}
+		
+		JScrollPane tablePanel = new JScrollPane(table);
+		tablePanel.setBackground(Color.decode("#a82052"));
+		tablePanel.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
+		
+		JLabel leaderBoardLabel = new JLabel("Leader Board", SwingConstants.CENTER);
+		leaderBoardLabel.setFont(new Font("Candice",Font.PLAIN,30));
+		leaderBoardLabel.setForeground(Color.orange);
+		
+		JPanel leaderboardPanel = new JPanel();
+		leaderboardPanel.setLayout(new GridBagLayout());
+		leaderboardPanel.setBackground(Color.decode("#a82052"));
+		leaderboardPanel.add(leaderBoardLabel);
+		
+		JButton backButton = new JButton("Back");
+		backButton.setFont(new Font("Candice", Font.PLAIN, 20));
+		backButton.setForeground(Color.WHITE);
+		backButton.setBackground(Color.ORANGE);
+		//backButton.setBorder(BorderFactory.createEmptyBorder());
+		backButton.setFocusPainted(false);		
+		ActionListener back = new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				leaderboardFrame.dispose();
+				homeFrame.setVisible(true);
 			}
 			
 		};
-		button.addActionListener(startGame);
+		backButton.addActionListener(back);
+		
+		leaderboardFrame.add(leaderboardPanel);
+		leaderboardFrame.add(tablePanel);
+		leaderboardFrame.add(backButton);
+		leaderboardFrame.setLocationRelativeTo(null);
 	}
 
 	/**
 	 * The playScreen() method displays the play screen.
 	 */
-
 	public void playScreen() {
 		this.model = new Model();
 		this.playFrame = new JFrame("CANDY CRUSH");						// Initialize the frame with a name.
@@ -271,9 +349,9 @@ public class UI implements Runnable {
 		
 		//Leader board
 		player.setScore(finalScore);
-		lBoard.considerScore(player.getScore(), player);
-		lBoard.writeData();
-		ArrayList<Profile> highscoreTable = lBoard.readData();
+		leaderboardObj.considerScore(player.getScore(), player);
+		leaderboardObj.writeData();
+		ArrayList<Profile> highscoreTable = leaderboardObj.readData();
 		
 		JPanel leaderBoard = new JPanel();
 		leaderBoard.setLayout(new GridLayout(2,1));
@@ -285,7 +363,6 @@ public class UI implements Runnable {
 		table.setFont(new Font("Candice",Font.PLAIN,15));
 		table.setBackground(Color.decode("#a82052"));
 		table.setForeground(Color.WHITE);
-		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		table.getTableHeader().setFont(new Font("Candice", Font.PLAIN, 20));
 		table.getTableHeader().setBackground(Color.WHITE);
 		
