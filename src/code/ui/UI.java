@@ -178,46 +178,13 @@ public class UI implements Runnable {
 		this.leaderboardFrame = new JFrame("Leader Board");
 		leaderboardFrame.setSize(400,400);
 		leaderboardFrame.setLayout(new GridLayout(0,1));
-		
-		JTable table = new JTable();
-		table.setFont(new Font("Candice",Font.PLAIN,15));
-		table.setBackground(Color.decode("#a82052"));
-		table.setForeground(Color.WHITE);
-		table.getTableHeader().setFont(new Font("Candice", Font.PLAIN, 20));
-		table.getTableHeader().setBackground(Color.WHITE);
-		
-		ArrayList<Profile> highscoreTable = leaderboardObj.readData();
-		
-		table.setModel(new DefaultTableModel(
-							new Object [][] {},
-				            new String [] {"Pos", "Name","Score"} ));
-		
-		DefaultTableModel model = (DefaultTableModel)table.getModel();
-		
-		//add the objects in the Arraylist to the table, row by row
-		for (int row = 0; row < highscoreTable.size(); row++) {
-			Object[] newRow = new Object[]{row + 1, highscoreTable.get(row).getName(), highscoreTable.get(row).getScore()};
-			model.addRow(newRow);
-		}
-		
-		JScrollPane tablePanel = new JScrollPane(table);
-		tablePanel.setBackground(Color.decode("#a82052"));
-		tablePanel.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
-		
-		JLabel leaderBoardLabel = new JLabel("Leader Board", SwingConstants.CENTER);
-		leaderBoardLabel.setFont(new Font("Candice",Font.PLAIN,30));
-		leaderBoardLabel.setForeground(Color.orange);
-		
-		JPanel leaderboardPanel = new JPanel();
-		leaderboardPanel.setLayout(new GridBagLayout());
-		leaderboardPanel.setBackground(Color.decode("#a82052"));
-		leaderboardPanel.add(leaderBoardLabel);
+		leaderboardFrame.setBackground(Color.decode("#a82052"));
 		
 		JButton backButton = new JButton("Back");
-		backButton.setFont(new Font("Candice", Font.PLAIN, 20));
+		backButton.setFont(new Font("Candice", Font.PLAIN, 25));
 		backButton.setForeground(Color.WHITE);
 		backButton.setBackground(Color.ORANGE);
-		//backButton.setBorder(BorderFactory.createEmptyBorder());
+		backButton.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
 		backButton.setFocusPainted(false);		
 		ActionListener back = new ActionListener() {
 			@Override
@@ -225,14 +192,67 @@ public class UI implements Runnable {
 				leaderboardFrame.dispose();
 				homeFrame.setVisible(true);
 			}
-			
 		};
+		
 		backButton.addActionListener(back);
 		
-		leaderboardFrame.add(leaderboardPanel);
-		leaderboardFrame.add(tablePanel);
-		leaderboardFrame.add(backButton);
-		leaderboardFrame.setLocationRelativeTo(null);
+		if (new File("out/leaderboard.csv").isFile()) { 							//check if there's a leaderboard csv file, returns true if yes.
+			JTable table = new JTable();
+			table.setFont(new Font("Candice",Font.PLAIN,15));
+			table.setBackground(Color.decode("#a82052"));
+			table.setForeground(Color.WHITE);
+			table.getTableHeader().setFont(new Font("Candice", Font.PLAIN, 20));
+			table.getTableHeader().setBackground(Color.WHITE);
+
+			ArrayList<Profile> highscoreTable = leaderboardObj.readData();
+			
+			table.setModel(new DefaultTableModel(
+								new Object [][] {},
+					            new String [] {"Pos", "Name","Score"} ));
+			
+			DefaultTableModel model = (DefaultTableModel)table.getModel();
+
+			//add the objects in the Arraylist to the table, row by row
+			for (int row = 0; row < highscoreTable.size(); row++) {
+				Object[] newRow = new Object[]{row + 1, highscoreTable.get(row).getName(), highscoreTable.get(row).getScore()};
+				model.addRow(newRow);
+			}
+			
+			JScrollPane tablePanel = new JScrollPane(table);
+			tablePanel.setBackground(Color.decode("#a82052"));
+			tablePanel.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
+			
+			JLabel leaderBoardLabel = new JLabel("Leader Board", SwingConstants.CENTER);
+			leaderBoardLabel.setFont(new Font("Candice",Font.PLAIN,40));
+			leaderBoardLabel.setForeground(Color.ORANGE);
+			
+			JPanel leaderboardPanel = new JPanel();
+			leaderboardPanel.setLayout(new GridBagLayout());
+			leaderboardPanel.setBackground(Color.decode("#a82052"));
+			leaderboardPanel.add(leaderBoardLabel);
+			
+			leaderboardFrame.add(leaderboardPanel);
+			leaderboardFrame.add(tablePanel);
+			leaderboardFrame.add(backButton);
+			leaderboardFrame.setLocationRelativeTo(null);
+		} 
+		else {
+			JLabel notice = new JLabel("No data yet, please play the game.");
+			notice.setFont(new Font("Candice", Font.PLAIN,30));
+			notice.setForeground(Color.WHITE);
+			
+			JPanel noticePanel = new JPanel();
+			noticePanel.add(notice);
+			noticePanel.setBackground(Color.decode("#a82052"));
+			
+			JPanel buttonPanel = new JPanel();
+			buttonPanel.setBackground(Color.decode("#a82052"));
+			buttonPanel.add(backButton);
+			
+			leaderboardFrame.add(noticePanel);
+			leaderboardFrame.add(buttonPanel);
+			leaderboardFrame.pack();
+		}
 	}
 
 	/**
