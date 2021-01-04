@@ -46,7 +46,7 @@ public class UI implements Runnable {
 		homeScreen();	// Show the home screen first,
 		inputNameFrame(); //Show the input player name screen,
 		playScreen();	// then the play screen.
-		leaderboardFrame();
+		leaderboardFrame(); //leaderboard screen
 	}
 	
 	public int getFinalScore() {
@@ -203,8 +203,10 @@ public class UI implements Runnable {
 			table.setForeground(Color.WHITE);
 			table.getTableHeader().setFont(new Font("Candice", Font.PLAIN, 20));
 			table.getTableHeader().setBackground(Color.WHITE);
-
-			ArrayList<Profile> highscoreTable = leaderboardObj.readData();
+			
+			leaderboardObj.readData();
+			System.out.println(new File("out/leaderboard.csv").isFile());
+			ArrayList<Profile> highscoreTable = leaderboardObj.getArray();
 			
 			table.setModel(new DefaultTableModel(
 								new Object [][] {},
@@ -371,7 +373,8 @@ public class UI implements Runnable {
 		player.setScore(finalScore);
 		leaderboardObj.considerScore(player.getScore(), player);
 		leaderboardObj.writeData();
-		ArrayList<Profile> highscoreTable = leaderboardObj.readData();
+		leaderboardObj.readData();
+		ArrayList<Profile> highscoreTable = leaderboardObj.getArray();
 		
 		JPanel leaderBoard = new JPanel();
 		leaderBoard.setLayout(new GridLayout(2,1));
@@ -497,7 +500,7 @@ public class UI implements Runnable {
 				playFrame.dispose();						// Close the play frame.
 				frame.dispose();							// Close the chosen frame.
 				if (frame == homeFrame)						// If this is the home frame,
-					System.exit(0);					// stop the program.
+					System.exit(0);							// stop the program.
 				else
 					SwingUtilities.invokeLater(new UI());	// Otherwise, restart the process.
 			}

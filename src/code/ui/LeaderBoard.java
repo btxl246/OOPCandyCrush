@@ -12,31 +12,37 @@ import javax.swing.table.DefaultTableModel;
 import code.model.*;
 
 public class LeaderBoard implements Serializable {
-	private ArrayList<Profile> leaderBoard;
+	private ArrayList<Profile> highscoreArray;
 	//private String FILE_PATH = FileSystemView.getFileSystemView().getDefaultDirectory().getPath();
 	private File saveFile = new File("out/leaderboard.csv");
 	
 	public LeaderBoard() {
-		if (saveFile.isFile()) {
-			leaderBoard = this.readData();
+		if (saveFile.length() == 1) {
+			readData();
 		}
-		else leaderBoard = new ArrayList<Profile>();
+		else {
+			highscoreArray = new ArrayList<Profile>();
+		}
+	}
+	
+	public ArrayList<Profile> getArray() {
+		return this.highscoreArray;
 	}
 	
 	/** considerScore() method "considers" the score whether it would be on the leader board
 	 * 
 	 * */
 	public void considerScore(int finalScore, Profile player) {
-		if (leaderBoard.size() == 0 || leaderBoard.size() < 10) {
-			leaderBoard.add(player);
+		if (highscoreArray.size() == 0 || highscoreArray.size() < 10) {
+			highscoreArray.add(player);
 			sortData();
 		}
 		else {
-			for(int i = 0; i < leaderBoard.size(); i++) {
-				if (finalScore > leaderBoard.get(i).getScore()) {
-					leaderBoard.add(player);
+			for(int i = 0; i < highscoreArray.size(); i++) {
+				if (finalScore > highscoreArray.get(i).getScore()) {
+					highscoreArray.add(player);
 					sortData();
-					if (leaderBoard.size() >= 10) leaderBoard.remove(10); //removing the 11th-highest player
+					if (highscoreArray.size() >= 10) highscoreArray.remove(10); //removing the 11th-highest player
 					break;
 				}
 			}
@@ -45,7 +51,7 @@ public class LeaderBoard implements Serializable {
 	
 	//Sort the leader board in a descending order
 	public void sortData() {
-		Collections.sort(leaderBoard);
+		Collections.sort(highscoreArray);
 	}
 	
 	/** writeData() method writes the ArrayList of sorted Profiles into an external file
@@ -55,7 +61,7 @@ public class LeaderBoard implements Serializable {
 		try {
 			FileOutputStream fos = new FileOutputStream(saveFile); 
 			ObjectOutputStream oos = new ObjectOutputStream(fos);
-			oos.writeObject(this.leaderBoard);
+			oos.writeObject(this.highscoreArray);
 			oos.flush();
 			oos.close();
 			fos.close();
@@ -69,15 +75,14 @@ public class LeaderBoard implements Serializable {
 	/** readData() method reads the ArrayList of sorted Profiles from an external file and put it in an object
 	 * 
 	 * */	
-	public ArrayList<Profile> readData() {
-		ArrayList<Profile> highscores = null;
-		FileInputStream fis = null; //to read data
+	public void readData() {
+		FileInputStream fis = null; 													//to read data
 		ObjectInputStream ois = null;
 		try {
 			fis = new FileInputStream(saveFile);
 			ois = new ObjectInputStream(fis);
-			highscores = (ArrayList<Profile>) ois.readObject(); //read the file and put the Object stored in the file in another object
-			System.out.println(highscores);									//test
+			this.highscoreArray = (ArrayList<Profile>) ois.readObject(); 				//read the file and put the Object stored in the file in another object
+			System.out.println(this.highscoreArray);									//test
 		} 
 		catch (IOException | ClassNotFoundException e) {
 			e.printStackTrace();
@@ -91,6 +96,5 @@ public class LeaderBoard implements Serializable {
 				e.printStackTrace();
 			}
 		}
-		return highscores;
 	}
 }

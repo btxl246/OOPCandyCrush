@@ -3,6 +3,7 @@ package code.model;
 import java.io.Serializable;
 
 public class Profile implements Serializable, Comparable<Profile> {
+	private static final long serialVersionUID = 1L;
 	private String playerName;
 	private int score;
 	private String characterChoice;
