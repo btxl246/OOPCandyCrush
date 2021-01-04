@@ -196,7 +196,7 @@ public class UI implements Runnable {
 		
 		backButton.addActionListener(back);
 		
-		if (new File("out/leaderboard.csv").isFile()) { 							//check if there's a leaderboard csv file, returns true if yes.
+		if (new File("out/leaderboard.csv").length() != 0) { 							//check if there's a leaderboard csv file, returns true if yes.
 			JTable table = new JTable();
 			table.setFont(new Font("Candice",Font.PLAIN,15));
 			table.setBackground(Color.decode("#a82052"));
@@ -205,7 +205,7 @@ public class UI implements Runnable {
 			table.getTableHeader().setBackground(Color.WHITE);
 			
 			leaderboardObj.readData();
-			System.out.println(new File("out/leaderboard.csv").isFile());
+			//System.out.println(new File("out/leaderboard.csv").length());
 			ArrayList<Profile> highscoreTable = leaderboardObj.getArray();
 			
 			table.setModel(new DefaultTableModel(
@@ -254,6 +254,7 @@ public class UI implements Runnable {
 			leaderboardFrame.add(noticePanel);
 			leaderboardFrame.add(buttonPanel);
 			leaderboardFrame.pack();
+			leaderboardFrame.setLocationRelativeTo(null);
 		}
 	}
 

@@ -17,7 +17,7 @@ public class LeaderBoard implements Serializable {
 	private File saveFile = new File("out/leaderboard.csv");
 	
 	public LeaderBoard() {
-		if (saveFile.length() == 1) {
+		if (saveFile.length() != 0) {
 			readData();
 		}
 		else {
