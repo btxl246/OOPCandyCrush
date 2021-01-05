@@ -82,7 +82,7 @@ public class LeaderBoard implements Serializable {
 			fis = new FileInputStream(saveFile);
 			ois = new ObjectInputStream(fis);
 			this.highscoreArray = (ArrayList<Profile>) ois.readObject(); 				//read the file and put the Object stored in the file in another object
-			System.out.println(this.highscoreArray);									//test
+			//System.out.println(this.highscoreArray);									//test
 		} 
 		catch (IOException | ClassNotFoundException e) {
 			e.printStackTrace();
