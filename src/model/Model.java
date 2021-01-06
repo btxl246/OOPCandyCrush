@@ -24,18 +24,15 @@ public class Model {
         this.observer.update();
     }
 
+    public boolean exit() {
+        return !this.grid.moreCorrectMoves();
+    }
+
     public Grid getGrid() {
         return this.grid;
     }
 
     public Selector getSelector() {
         return this.selector;
-    }
-
-    public boolean exit() {
-        if (this.grid.getMoreCorrectMoves() == 0)
-            return grid.moreCorrectMoves();
-
-        return !grid.moreCorrectMoves();
     }
 }

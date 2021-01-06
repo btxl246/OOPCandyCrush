@@ -3,28 +3,37 @@ package ui.leaderBoard;
 import java.io.Serializable;
 
 public class Profile implements Serializable, Comparable<Profile> {
-    private String playerName;
+    private String dateAndTime;
+    private String name;
     private int score;
 
-    public void setName(String name) {
-        this.playerName = name;
+    public String getDateAndTime() {
+        return this.dateAndTime;
+    }
+
+    public void setDateAndTime(String dateAndTime) {
+        this.dateAndTime = dateAndTime;
     }
 
     public String getName() {
-        return this.playerName;
+        return this.name;
     }
 
-    public void setScore(int finalScore) {
-        this.score = finalScore;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public int getScore() {
         return this.score;
     }
 
+    public void setScore(int finalScore) {
+        this.score = finalScore;
+    }
+
     @Override
     public String toString() {
-        return "Player: " + this.playerName + " - Score: " + this.score;
+        return "Player: " + this.name + " - Score: " + this.score;
     }
 
     @Override

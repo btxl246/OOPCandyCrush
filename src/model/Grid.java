@@ -1,15 +1,17 @@
 package model;
 
+import ui.Sound;
+
 import java.awt.*;
 import java.util.*;
 
 public class Grid {
     private ArrayList<ArrayList<String>> grid;
     private final ArrayList<String> tiles = new ArrayList<>();
+    private final int NUM_TILES = 6;
     private final Random random = new Random();
     private int totalScore = 0;
-    private final int NUM_TILES = 6;
-    private final int moreCorrectMoves;
+    private int totalMatches = 0;
 
     public Grid(int rows, int cols, String pack) {
         String type;
@@ -18,117 +20,73 @@ public class Grid {
         else
             type = ".png";
 
-        for (int i = 0; i < NUM_TILES; i++) {
+        for (int i = 0; i < NUM_TILES; i++)
             this.tiles.add("in/images/" + pack + "/" + i + type);
-        }
 
         do {
             this.grid  = new ArrayList<>();
             for (int y = 0; y < rows; y++) {
                 ArrayList<String> row = new ArrayList<>();
-                for (int x = 0; x < cols; x++) {
+                for (int x = 0; x < cols; x++)
                     row.add(tiles.get(this.random.nextInt(NUM_TILES)));
-                }
-                this.grid.add(row);
+                grid.add(row);
             }
-
-            /*for (int y = 0; y < rows; y++) {
-                for (int x = 0; x < cols; x++) {
-                    System.out.print(grid.get(y).get(x) + "  ");
-                }
-                System.out.println();
-            }*/
         } while ((checkMatches() && moreCorrectMoves(grid)) || (checkMatches() && !moreCorrectMoves(grid)) || (!checkMatches() && !moreCorrectMoves(grid)));
-
-        if (!moreCorrectMoves(grid))
-            this.moreCorrectMoves = 0;
-        else
-            moreCorrectMoves = 1;
     }
 
-    public int getMoreCorrectMoves() {
-        return this.moreCorrectMoves;
-    }
-
-    public int getRows() {
-        return this.grid.size();
-    }
-
-    public int getCols() {
-        return this.grid.get(0).size();
-    }
-
-    public String getIcon(Point p) {
-        return this.grid.get(p.y).get(p.x);
-    }
-
-    public void setIcon(Point p, String str) {
-        this.grid.get(p.y).set(p.x, str);
-    }
-
-    public LinkedHashSet<Point> allMatches() {
+    private LinkedHashSet<Point> allMatches() {
         LinkedHashSet<Point> allMatches = new LinkedHashSet<>();
         allMatches.addAll(horizontalMatches());
         allMatches.addAll(verticalMatches());
-        //System.out.println(allMatches);
+
         return allMatches;
     }
 
-    public LinkedHashSet<Point> horizontalMatches() {
+    private LinkedHashSet<Point> horizontalMatches() {
         LinkedHashSet<Point> hMatches = new LinkedHashSet<>();
 
         for (int y = 0; y < getRows(); y++) {
-            //System.out.print("Row: " + y + "  ");
             for (int x = 0; x < getCols() - 2; x++) {
                 HashSet<Point> hPoints = new HashSet<>();
                 HashSet<String> hIcons = new HashSet<>();
 
-                //System.out.print("\tCol: " + x + "  ");
                 for (int i = 0; i < 3; i++) {
                     Point point = new Point(x + i, y);
                     hPoints.add(point);
-                    //System.out.print(point + "  ");
 
                     String str = getIcon(point);
                     hIcons.add(str);
-                    //System.out.print(str + "  ");
                 }
+
                 if (hIcons.size() == 1)
                     hMatches.addAll(hPoints);
             }
-            //System.out.println();
         }
 
-        //System.out.println(hMatches);
         return hMatches;
     }
 
-    public LinkedHashSet<Point> verticalMatches() {
+    private LinkedHashSet<Point> verticalMatches() {
         LinkedHashSet<Point> vMatches = new LinkedHashSet<>();
 
         for (int x = 0; x < getCols(); x++) {
-            //System.out.print("Col: " + x + "  ");
             for (int y = 0; y < getRows() - 2; y++) {
                 HashSet<Point> vPoints = new HashSet<>();
                 HashSet<String> vIcons = new HashSet<>();
 
-                //System.out.print("\tRow: " + y + "  ");
                 for (int i = 0; i < 3; i++) {
                     Point point = new Point(x, y + i);
                     vPoints.add(point);
-                    //System.out.print(point + "  ");
 
                     String str = getIcon(point);
                     vIcons.add(str);
-                    //System.out.print(str + "  ");
                 }
+
                 if (vIcons.size() == 1)
                     vMatches.addAll(vPoints);
             }
-            //System.out.println();
         }
 
-        //System.out.println(vMatches);
         return vMatches;
     }
 
@@ -143,20 +101,16 @@ public class Grid {
     }
 
     public void switchTiles() {
-        if (checkMatches()) {
+        if (checkMatches())
             removeTiles();
-            System.out.println("Total score: " + this.totalScore);
-        }
     }
 
-    public void removeTiles() {
-        int i = 0;
+    private void removeTiles() {
         while (allMatches().size() > 0) {
+            new Sound();
+            this.totalMatches++;
             LinkedHashSet<Point> newPoints = new LinkedHashSet<>();
-
-            System.out.println("\tLoop: " + i);
             LinkedHashSet<Point> allMatches = allMatches();
-            System.out.println("All: " + allMatches.size() + "  " + allMatches);
 
             ArrayList<LinkedHashSet<Point>> sets = new ArrayList<>();
             for (int x = minX(allMatches); x <= maxX(allMatches); x++) {
@@ -172,10 +126,8 @@ public class Grid {
             }
 
             for (LinkedHashSet<Point> set : sets) {
-                //System.out.println(set);
                 for (Point p : set)
                     this.totalScore += score(getIcon(p));
-                //System.out.println();
             }
 
             for (LinkedHashSet<Point> set : sets) {
@@ -196,76 +148,72 @@ public class Grid {
             }
 
             for (Point p : newPoints) {
-                //System.out.print(p + "  " + getIcon(p) + " -> ");
                 setNewTile(p);
-                //System.out.println(getIcon(p));
             }
-
-            i++;
         }
     }
 
-    public void setNewTile(Point p) {
+    private void setNewTile(Point p) {
         setIcon(p, this.tiles.get(this.random.nextInt(NUM_TILES)));
     }
 
-    public int maxX(LinkedHashSet<Point> set) {
+    private int maxX(LinkedHashSet<Point> set) {
         int maxX = 0;
         for (Point p : set) {
             if (maxX < p.x)
                 maxX = p.x;
         }
+
         return maxX;
     }
 
-    public int maxY(LinkedHashSet<Point> set) {
+    private int maxY(LinkedHashSet<Point> set) {
         int maxY = 0;
         for (Point p : set) {
             if (maxY < p.y)
                 maxY = p.y;
         }
+
         return maxY;
     }
 
-    public int minX(LinkedHashSet<Point> set) {
+    private int minX(LinkedHashSet<Point> set) {
         int minX = getCols();
         for (Point p : set) {
             if (minX > p.x)
                 minX = p.x;
         }
+
         return minX;
     }
 
-    public int minY(LinkedHashSet<Point> set) {
+    private int minY(LinkedHashSet<Point> set) {
         int minY = getRows();
         for (Point p : set) {
             if (minY > p.y)
                 minY = p.y;
         }
+
         return minY;
     }
 
-    public int score(String str) {
+    private int score(String str) {
         int value = Integer.parseInt(str.replaceAll("[^0-9]", ""));
         value++;
         value *= 10;
-        //System.out.print(value + "  ");
+
         return value;
     }
 
-    public int getTotalScore() {
-        return this.totalScore;
-    }
-
-    public boolean match(Point a, Point b, ArrayList<ArrayList<String>> grid) {
+    private boolean match(Point a, Point b, ArrayList<ArrayList<String>> grid) {
         return grid.get(a.y).get(a.x).equals(grid.get(b.y).get(b.x));
     }
 
-    public boolean withinGrid(Point p, ArrayList<ArrayList<String>> grid) {
+    private boolean withinGrid(Point p, ArrayList<ArrayList<String>> grid) {
         return (p.x >= 0) && (p.x < grid.get(0).size()) && (p.y >= 0) && (p.y < grid.size());
     }
 
-    public boolean moreCorrectMoves(ArrayList<ArrayList<String>> grid) {
+    private boolean moreCorrectMoves(ArrayList<ArrayList<String>> grid) {
         for (int x = 0; x < grid.get(0).size(); x++) {
             for (int y = 0; y < grid.size(); y++) {
                 Point a = new Point(x - 1, y);
@@ -280,7 +228,6 @@ public class Grid {
                 Point j = new Point(x, y + 2);
                 Point k = new Point(x - 2, y);
                 Point l = new Point(x, y - 2);
-                //System.out.println(a + ", " + b + ", " + c + ", " + d + ", " + e + ", " + f + ", " + g + ", " + h + ", " + i + ", " + j + ", " + k + ", " + l);
 
                 if (withinGrid(a, grid) && withinGrid(b, grid) && withinGrid(c, grid) && match(a, b, grid) && match(a, c, grid)) { return true; }
                 if (withinGrid(a, grid) && withinGrid(b, grid) && withinGrid(d, grid) && match(a, b, grid) && match(a, d, grid)) { return true; }
@@ -306,5 +253,29 @@ public class Grid {
 
     public boolean moreCorrectMoves(){
         return this.moreCorrectMoves(this.grid);
+    }
+
+    public int getRows() {
+        return this.grid.size();
+    }
+
+    public int getCols() {
+        return this.grid.get(0).size();
+    }
+
+    public String getIcon(Point p) {
+        return this.grid.get(p.y).get(p.x);
+    }
+
+    private void setIcon(Point p, String str) {
+        this.grid.get(p.y).set(p.x, str);
+    }
+
+    public int getTotalScore() {
+        return this.totalScore;
+    }
+
+    public int getTotalMatches() {
+        return this.totalMatches;
     }
 }
