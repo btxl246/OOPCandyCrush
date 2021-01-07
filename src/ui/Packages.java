@@ -12,8 +12,6 @@ public class Packages implements ItemListener  {
     private JComboBox<String> cb;
     private String characterChoice = "in/images/character/0.png";
 
-    public Packages() {}
-
     public JPanel tilePackage() {
         JPanel tilePanel = new JPanel();
         tilePanel.setBackground(new Color(253, 230, 240));

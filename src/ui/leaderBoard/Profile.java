@@ -40,5 +40,4 @@ public class Profile implements Serializable, Comparable<Profile> {
     public int compareTo(Profile otherProfile) {
         return Integer.compare(otherProfile.getScore(), this.getScore());
     }
-
 }

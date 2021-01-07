@@ -18,7 +18,7 @@ public class UI implements Runnable {
     private Packages packages;
     private Model model;
     private Profile profile;
-    private final LeaderBoard lB = new LeaderBoard();
+    private final LeaderBoard LB = new LeaderBoard();
 
     private JFrame homeFrame;
     private JFrame playFrame;
@@ -30,13 +30,13 @@ public class UI implements Runnable {
     private JPanel leaderBoardPanel;
     private JPanel infoPanel;
 
-    private JLabel matches;
+    private JLabel matchesLabel;
     private JLabel yourScoreLabel;
 
     private JTextField rowText;
     private JTextField colText;
 
-    private String playMode = "";
+    private String playMode;
 
     private ArrayList<ArrayList<JButton>> playGrid;
 
@@ -59,7 +59,7 @@ public class UI implements Runnable {
 
         if (new File("out/leaderBoard").length() != 0) {
             leaderBoardPanel.setPreferredSize(new Dimension(700, 500));
-            ArrayList<Profile> leaderBoard = lB.getLeaderBoard();
+            ArrayList<Profile> leaderBoard = LB.getLeaderBoard();
 
             JTable table = new JTable() {
                 @Override
@@ -80,7 +80,7 @@ public class UI implements Runnable {
                         component.setBackground(Color.ORANGE);
                         component.setForeground(Color.WHITE);
                     } else if (row == 2) {
-                        component.setBackground(Color.YELLOW);
+                        component.setBackground(new Color(245, 245, 0));
                         component.setForeground(Color.WHITE);
                     } else {
                         component.setBackground(new Color(253, 230, 240));
@@ -306,28 +306,8 @@ public class UI implements Runnable {
         go.setBorder(BorderFactory.createLineBorder(new Color(229, 64, 116), 3, true));
         go.setFocusPainted(false);
         go.addActionListener(e -> {
-            if (text.getText().isBlank()) {
-                UIManager.put("OptionPane.background", new Color(253, 230, 240));
-                UIManager.put("Panel.background", new Color(253, 230, 240));
-                UIManager.put("OptionPane.messageForeground", new Color(109, 18, 51));
-                UIManager.put("OptionPane.messageFont", new Font("Candice", Font.PLAIN, 25));
-                UIManager.put("OptionPane.buttonFont", new Font("Candice", Font.PLAIN, 25));
-                UIManager.put("Button.border", BorderFactory.createLineBorder(new Color(14, 123, 247), 3, true));
-                UIManager.put("Button.background", new Color(0, 169, 239));
-                UIManager.put("Button.foreground", Color.WHITE);
-                UIManager.put("OptionPane.okButtonText", " Okay ");
-                JOptionPane.showMessageDialog(null, "Sorry, we didn't catch that.\nPlease try again.", "WARNING", JOptionPane.WARNING_MESSAGE, null);
-
-                UIManager.put("OptionPane.background", null);
-                UIManager.put("Panel.background", null);
-                UIManager.put("OptionPane.messageForeground", null);
-                UIManager.put("OptionPane.messageFont", null);
-                UIManager.put("OptionPane.buttonFont", null);
-                UIManager.put("Button.border", null);
-                UIManager.put("Button.background", null);
-                UIManager.put("Button.foreground", null);
-                UIManager.put("OptionPane.okButtonText", null);
-            }
+            if (text.getText().isBlank())
+                message("Sorry, we didn't catch that.\nPlease try again.", "WARNING", JOptionPane.WARNING_MESSAGE, null);
             else {
                 this.profile = new Profile();
                 profile.setName(text.getText());
@@ -481,9 +461,9 @@ public class UI implements Runnable {
         infoPanel.add(character);
         infoPanel.add(nameLabel);
 
-        this.matches = new JLabel();
-        matches.setFont(new Font("Candice", Font.PLAIN, 25));
-        matches.setForeground(new Color(109, 18, 51));
+        this.matchesLabel = new JLabel();
+        matchesLabel.setFont(new Font("Candice", Font.PLAIN, 25));
+        matchesLabel.setForeground(new Color(109, 18, 51));
 
         this.yourScoreLabel = new JLabel();
         yourScoreLabel.setFont(new Font("Candice", Font.PLAIN, 25));
@@ -556,7 +536,7 @@ public class UI implements Runnable {
         model.addModelObserver(this);
 
         playFrame.add(infoPanel, gBC(GridBagConstraints.CENTER, 1, 1, 0, 0, 1, 1));
-        playFrame.add(matches, gBC(GridBagConstraints.CENTER, 1, 1, 1, 0, 1, 1));
+        playFrame.add(matchesLabel, gBC(GridBagConstraints.CENTER, 1, 1, 1, 0, 1, 1));
         playFrame.add(yourScoreLabel, gBC(GridBagConstraints.CENTER, 1, 1, 2, 0, 1, 1));
 
         playFrame.add(playPanel, gBC(GridBagConstraints.CENTER, 1, 1, 0, 1, 3, 1));
@@ -566,31 +546,6 @@ public class UI implements Runnable {
         playFrame.pack();
         playFrame.setLocationRelativeTo(null);
         playFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    }
-
-    private int option() {
-        UIManager.put("OptionPane.background", new Color(253, 230, 240));
-        UIManager.put("Panel.background", new Color(253, 230, 240));
-        UIManager.put("OptionPane.messageForeground", new Color(109, 18, 51));
-        UIManager.put("OptionPane.messageFont", new Font("Candice", Font.PLAIN, 25));
-        UIManager.put("OptionPane.buttonFont", new Font("Candice", Font.PLAIN, 25));
-        UIManager.put("Button.border", BorderFactory.createLineBorder(new Color(14, 123, 247), 3, true));
-        UIManager.put("Button.background", new Color(0, 169, 239));
-        UIManager.put("Button.foreground", Color.WHITE);
-
-        Object[] options = {"Yes", "No"};
-        int n = JOptionPane.showOptionDialog(null, "Are you sure?\nYou will lose your current progress.", "WARNING", JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[0]);
-
-        UIManager.put("OptionPane.background", null);
-        UIManager.put("Panel.background", null);
-        UIManager.put("OptionPane.messageForeground", null);
-        UIManager.put("OptionPane.messageFont", null);
-        UIManager.put("OptionPane.buttonFont", null);
-        UIManager.put("Button.border", null);
-        UIManager.put("Button.background", null);
-        UIManager.put("Button.foreground", null);
-
-        return n;
     }
 
     private void setOverFrame() {
@@ -636,7 +591,7 @@ public class UI implements Runnable {
         newButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         newButton.setFont(new Font("Candice", Font.PLAIN, 25));
         newButton.setForeground(Color.WHITE);
-        newButton.setBackground(Color.YELLOW);
+        newButton.setBackground(new Color(245, 245, 0));
         newButton.setBorder(BorderFactory.createLineBorder(Color.ORANGE, 3, true));
         newButton.setFocusPainted(false);
         newButton.addActionListener(e -> {
@@ -685,21 +640,26 @@ public class UI implements Runnable {
             playGrid.get(first.y).get(first.x).setBackground(Color.RED);
         }
 
-        this.matches.setText("Matches: " + model.getGrid().getTotalMatches());
+        this.matchesLabel.setText("Matches: " + model.getGrid().getTotalMatches());
         this.yourScoreLabel.setText(" " + model.getGrid().getTotalScore() + " ");
 
         if (model.exit()) {
-            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-            this.profile.setDateAndTime(sdf.format(new Date(System.currentTimeMillis())));
-            profile.setScore(model.getGrid().getTotalScore());
-            this.lB.considerScore(profile);
-            lB.writeData();
-            lB.readData();
             for (ArrayList<JButton> al : playGrid)
                 for (JButton button : al)
                     button.setEnabled(false);
             this.playFrame.dispose();
+
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+            this.profile.setDateAndTime(sdf.format(new Date(System.currentTimeMillis())));
+            profile.setScore(model.getGrid().getTotalScore());
+            LB.considerScore(profile);
+            LB.writeData();
+            LB.readData();
             setOverFrame();
+            if (LB.topThree())
+                message("Congratulations!\nYou are in the top 3.\nYour position: #" + LB.getPosition() + ".", "MESSAGE", JOptionPane.INFORMATION_MESSAGE, new ImageIcon("in/images/candycrush.jpg"));
+            else
+                message("Congratulations!\nYou've just set a new record.\nYour position: #" + LB.getPosition() + ".", "MESSAGE", JOptionPane.INFORMATION_MESSAGE, new ImageIcon("in/images/candycrush.jpg"));
         }
 
         playFrame.repaint();
@@ -752,5 +712,53 @@ public class UI implements Runnable {
         gBC.gridheight = gridheight;
 
         return gBC;
+    }
+
+    private int option() {
+        UIManager.put("OptionPane.background", new Color(253, 230, 240));
+        UIManager.put("Panel.background", new Color(253, 230, 240));
+        UIManager.put("OptionPane.messageForeground", new Color(109, 18, 51));
+        UIManager.put("OptionPane.messageFont", new Font("Candice", Font.PLAIN, 25));
+        UIManager.put("OptionPane.buttonFont", new Font("Candice", Font.PLAIN, 25));
+        UIManager.put("Button.border", BorderFactory.createLineBorder(new Color(14, 123, 247), 3, true));
+        UIManager.put("Button.background", new Color(0, 169, 239));
+        UIManager.put("Button.foreground", Color.WHITE);
+
+        Object[] options = {"Yes", "No"};
+        int n = JOptionPane.showOptionDialog(null, "Are you sure?\nYou will lose your current progress.", "WARNING", JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[0]);
+
+        UIManager.put("OptionPane.background", null);
+        UIManager.put("Panel.background", null);
+        UIManager.put("OptionPane.messageForeground", null);
+        UIManager.put("OptionPane.messageFont", null);
+        UIManager.put("OptionPane.buttonFont", null);
+        UIManager.put("Button.border", null);
+        UIManager.put("Button.background", null);
+        UIManager.put("Button.foreground", null);
+
+        return n;
+    }
+
+    private void message(String message, String title, int messageType, ImageIcon icon) {
+        UIManager.put("OptionPane.background", new Color(253, 230, 240));
+        UIManager.put("Panel.background", new Color(253, 230, 240));
+        UIManager.put("OptionPane.messageForeground", new Color(109, 18, 51));
+        UIManager.put("OptionPane.messageFont", new Font("Candice", Font.PLAIN, 25));
+        UIManager.put("OptionPane.buttonFont", new Font("Candice", Font.PLAIN, 25));
+        UIManager.put("Button.border", BorderFactory.createLineBorder(new Color(14, 123, 247), 3, true));
+        UIManager.put("Button.background", new Color(0, 169, 239));
+        UIManager.put("Button.foreground", Color.WHITE);
+        UIManager.put("OptionPane.okButtonText", " Okay ");
+        JOptionPane.showMessageDialog(null, message, title, messageType, icon);
+
+        UIManager.put("OptionPane.background", null);
+        UIManager.put("Panel.background", null);
+        UIManager.put("OptionPane.messageForeground", null);
+        UIManager.put("OptionPane.messageFont", null);
+        UIManager.put("OptionPane.buttonFont", null);
+        UIManager.put("Button.border", null);
+        UIManager.put("Button.background", null);
+        UIManager.put("Button.foreground", null);
+        UIManager.put("OptionPane.okButtonText", null);
     }
 }

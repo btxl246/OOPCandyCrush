@@ -6,12 +6,12 @@ import java.awt.*;
 
 public class Model {
     private UI observer;
-    private final Grid grid;
-    private final Selector selector;
+    private final Grid GRID;
+    private final Selector SELECTOR;
 
     public Model(Grid grid) {
-        this.grid = grid;
-        this.selector = new Selector(grid);
+        this.GRID = grid;
+        this.SELECTOR = new Selector(grid);
     }
 
     public void addModelObserver(UI ui) {
@@ -20,19 +20,19 @@ public class Model {
     }
 
     public void select(int x, int y) {
-        this.selector.selectedMove(new Point(x, y));
+        this.SELECTOR.processSelectedMove(new Point(x, y));
         this.observer.update();
     }
 
     public boolean exit() {
-        return !this.grid.moreCorrectMoves();
+        return !this.GRID.moreCorrectMoves();
     }
 
     public Grid getGrid() {
-        return this.grid;
+        return this.GRID;
     }
 
     public Selector getSelector() {
-        return this.selector;
+        return this.SELECTOR;
     }
 }

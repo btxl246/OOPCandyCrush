@@ -4,13 +4,23 @@ import java.io.*;
 import javax.sound.sampled.*;
 
 public class Sound implements LineListener {
+    private static Sound instance;
     private boolean playCompleted;
 
-    public Sound() {
-        play();
+    private Sound() {}
+
+    public static Sound getInstance() {
+        if (instance == null)
+            instance = new Sound();
+
+        return instance;
     }
 
-    private void play() {
+    public void remove() {
+        instance = null;
+    }
+
+    public void play() {
         File audioFile = new File("in/sound.wav");
 
         try {

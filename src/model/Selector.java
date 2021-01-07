@@ -5,27 +5,27 @@ import java.awt.*;
 public class Selector {
     private Point first;
     private Point second;
-    private final Grid grid;
+    private final Grid GRID;
 
     public Selector(Grid grid) {
-        this.grid = grid;
+        this.GRID = grid;
         clearLastMove();
     }
 
-    public void selectedMove(Point p) {
+    public void processSelectedMove(Point p) {
         if (this.first == null) {
             first = p;
         }
         else {
             this.second = p;
             if (adjacent(first, second)) {
-                this.grid.switchTilesDemo(first, second);
+                this.GRID.switchTilesTest(first, second);
 
-                if (!grid.checkMatches()) {
-                    grid.switchTilesDemo(first, second);
+                if (!GRID.checkMatches()) {
+                    GRID.switchTilesTest(first, second);
                 }
 
-                grid.switchTiles();
+                GRID.switchTiles();
             }
 
             clearLastMove();

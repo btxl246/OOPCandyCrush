@@ -7,9 +7,9 @@ import java.util.*;
 
 public class Grid {
     private ArrayList<ArrayList<String>> grid;
-    private final ArrayList<String> tiles = new ArrayList<>();
+    private final ArrayList<String> TILES = new ArrayList<>();
     private final int NUM_TILES = 6;
-    private final Random random = new Random();
+    private final Random RANDOM = new Random();
     private int totalScore = 0;
     private int totalMatches = 0;
 
@@ -21,14 +21,14 @@ public class Grid {
             type = ".png";
 
         for (int i = 0; i < NUM_TILES; i++)
-            this.tiles.add("in/images/" + pack + "/" + i + type);
+            this.TILES.add("in/images/" + pack + "/" + i + type);
 
         do {
             this.grid  = new ArrayList<>();
             for (int y = 0; y < rows; y++) {
                 ArrayList<String> row = new ArrayList<>();
                 for (int x = 0; x < cols; x++)
-                    row.add(tiles.get(this.random.nextInt(NUM_TILES)));
+                    row.add(TILES.get(this.RANDOM.nextInt(NUM_TILES)));
                 grid.add(row);
             }
         } while ((checkMatches() && moreCorrectMoves(grid)) || (checkMatches() && !moreCorrectMoves(grid)) || (!checkMatches() && !moreCorrectMoves(grid)));
@@ -94,7 +94,7 @@ public class Grid {
         return allMatches().size() > 0;
     }
 
-    public void switchTilesDemo(Point a, Point b) {
+    public void switchTilesTest(Point a, Point b) {
         String temp = getIcon(a);
         setIcon(a, getIcon(b));
         setIcon(b, temp);
@@ -107,7 +107,10 @@ public class Grid {
 
     private void removeTiles() {
         while (allMatches().size() > 0) {
-            new Sound();
+            Sound sound = Sound.getInstance();
+            sound.play();
+            sound.remove();
+
             this.totalMatches++;
             LinkedHashSet<Point> newPoints = new LinkedHashSet<>();
             LinkedHashSet<Point> allMatches = allMatches();
@@ -139,7 +142,7 @@ public class Grid {
 
                     while ((a.y - setSize) >= 0) {
                         b.setLocation(a.x, a.y - setSize);
-                        switchTilesDemo(a, b);
+                        switchTilesTest(a, b);
                         a.setLocation(a.x, a.y - setSize);
                     }
 
@@ -154,7 +157,7 @@ public class Grid {
     }
 
     private void setNewTile(Point p) {
-        setIcon(p, this.tiles.get(this.random.nextInt(NUM_TILES)));
+        setIcon(p, this.TILES.get(this.RANDOM.nextInt(NUM_TILES)));
     }
 
     private int maxX(LinkedHashSet<Point> set) {
@@ -197,8 +200,8 @@ public class Grid {
         return minY;
     }
 
-    private int score(String str) {
-        int value = Integer.parseInt(str.replaceAll("[^0-9]", ""));
+    private int score(String tile) {
+        int value = Integer.parseInt(tile.replaceAll("[^0-9]", ""));
         value++;
         value *= 10;
 
@@ -267,8 +270,8 @@ public class Grid {
         return this.grid.get(p.y).get(p.x);
     }
 
-    private void setIcon(Point p, String str) {
-        this.grid.get(p.y).set(p.x, str);
+    private void setIcon(Point p, String tile) {
+        this.grid.get(p.y).set(p.x, tile);
     }
 
     public int getTotalScore() {
