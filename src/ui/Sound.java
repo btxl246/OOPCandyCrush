@@ -1,7 +1,17 @@
+/**
+ * Object-Oriented Programming project.
+ * @author Bui Thi Xuan Lan - ITDSIU19007
+ * @author Nguyen Duc Minh - ITITIU19030
+ */
+
 package ui;
 
 import java.io.*;
 import javax.sound.sampled.*;
+
+/**
+ * Plays a sound using Singleton.
+ */
 
 public class Sound implements LineListener {
     private static Sound instance;
@@ -16,9 +26,17 @@ public class Sound implements LineListener {
         return instance;
     }
 
+    /**
+     * Nullifies the instance.
+     */
+
     public void remove() {
         instance = null;
     }
+
+    /**
+     * Plays the sound.
+     */
 
     public void play() {
         File audioFile = new File("in/sound.wav");
@@ -33,7 +51,8 @@ public class Sound implements LineListener {
             audioClip.open(audioStream);
             audioClip.start();
 
-            while (!playCompleted) {    // Keep the program going before the audio file ends.
+            // Keeps the program going before the audio file ends.
+            while (!playCompleted) {
                 try {
                     Thread.sleep(1);
                 } catch (InterruptedException ex) {
@@ -56,7 +75,7 @@ public class Sound implements LineListener {
 
     /**
      * Listens to the START and STOP events of the audio line.
-     * @param event The LineEvent of the audio file.
+     * @param event LineEvent of the audio file.
      */
 
     @Override

@@ -1,3 +1,9 @@
+/**
+ * Object-Oriented Programming project.
+ * @author Bui Thi Xuan Lan - ITDSIU19007
+ * @author Nguyen Duc Minh - ITITIU19030
+ */
+
 package ui;
 
 import javax.swing.*;
@@ -6,11 +12,20 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
 
+/**
+ * Packs images into JPanels for use in UI.
+ */
+
 public class Packages implements ItemListener  {
-    private JPanel cards;
-    private String tileChoice = "candy 1";
-    private JComboBox<String> cb;
-    private String characterChoice = "in/images/character/0.png";
+    private JPanel cards;                                           // JPanel with CardLayout.
+    private String tileChoice = "candy 1";                          // Tile theme choice.
+    private JComboBox<String> cb;                                   // JComboBox to accompany cards.
+    private String characterChoice = "in/images/character/0.png";   // Character icon choice.
+
+    /**
+     * Packs nine tile themes into a JPanel with a JComboBox of their names and a CardLayout JPanel displaying each theme.
+     * @return Tile JPanel.
+     */
 
     public JPanel tilePackage() {
         JPanel tilePanel = new JPanel();
@@ -29,10 +44,6 @@ public class Packages implements ItemListener  {
         String FISH2 = "Fish 2";
         String FRUIT = "Fruit";
         String SQUARE = "Square";
-
-        JPanel comboBoxPane = new JPanel();
-        comboBoxPane.setBackground(new Color(253, 230, 240));
-
         String[] comboBoxItems = {BOTTLE, CANDY1, CANDY2, CANDY3, CUPCAKE, FISH1, FISH2, FRUIT, SQUARE};
         cb = new JComboBox<>(comboBoxItems);
         cb.setForeground(new Color(109, 18, 51));
@@ -40,6 +51,9 @@ public class Packages implements ItemListener  {
         cb.setEditable(false);
         cb.addItemListener(this);
         cb.setFont(new Font("Candice", Font.PLAIN, 25));
+
+        JPanel comboBoxPane = new JPanel();
+        comboBoxPane.setBackground(new Color(253, 230, 240));
         comboBoxPane.add(cb);
 
         cards = new JPanel(new CardLayout());
@@ -60,6 +74,11 @@ public class Packages implements ItemListener  {
         return tilePanel;
     }
 
+    /**
+     * Fills each tile theme in a JPanel.
+     * @param tile Tile theme.
+     * @return JPanel of one theme.
+     */
     private JPanel fillTilePanel(String tile) {
         String type;
         if (tile.equalsIgnoreCase("fruit"))
@@ -80,6 +99,11 @@ public class Packages implements ItemListener  {
 
         return panel;
     }
+
+    /**
+     * Packs 15 characters into a JPanel for the player to choose as an icon.
+     * @return JPanel of all character icons.
+     */
 
     public JPanel characterPackage() {
         final int[] empty = {-1};
@@ -114,6 +138,11 @@ public class Packages implements ItemListener  {
         return characterPanel;
     }
 
+    /**
+     * Shows JPanel of a tile theme when its name is chosen.
+     * @param e ItemEvent.
+     */
+
     @Override
     public void itemStateChanged(ItemEvent e) {
         tileChoice = cb.getItemAt(cb.getSelectedIndex()).toLowerCase();
@@ -121,9 +150,19 @@ public class Packages implements ItemListener  {
         cl.show(cards, (String) e.getItem());
     }
 
+    /**
+     * Returns the tile theme choice.
+     * @return Name of the theme.
+     */
+
     public String getTileChoice() {
         return this.tileChoice;
     }
+
+    /**
+     * Returns the character icon choice.
+     * @return Path of the icon.
+     */
 
     public String getCharacterChoice() {
         return this.characterChoice;

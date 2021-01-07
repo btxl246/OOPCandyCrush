@@ -1,6 +1,16 @@
+/**
+ * Object-Oriented Programming project.
+ * @author Bui Thi Xuan Lan - ITDSIU19007
+ * @author Nguyen Duc Minh - ITITIU19030
+ */
+
 package ui.leaderBoard;
 
 import java.io.Serializable;
+
+/**
+ * A player's profile containing when their game finishes, name, and score.
+ */
 
 public class Profile implements Serializable, Comparable<Profile> {
     private String dateAndTime;

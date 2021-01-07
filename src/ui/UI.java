@@ -1,3 +1,9 @@
+/**
+ * Object-Oriented Programming project.
+ * @author Bui Thi Xuan Lan - ITDSIU19007
+ * @author Nguyen Duc Minh - ITITIU19030
+ */
+
 package ui;
 
 import model.*;
@@ -13,6 +19,10 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
+
+/**
+ * Displays the game.
+ */
 
 public class UI implements Runnable {
     private Packages packages;
@@ -40,11 +50,19 @@ public class UI implements Runnable {
 
     private ArrayList<ArrayList<JButton>> playGrid;
 
+    /**
+     * Overrides to run the home screen.
+     */
+
     @Override
     public void run() {
         setHomeFrame();
         this.homeFrame.setVisible(true);
     }
+
+    /**
+     * Sets the leader board with either no data or available data of a record.
+     */
 
     private void setLeaderBoardPanel() {
         this.leaderBoardPanel = new JPanel();
@@ -131,6 +149,10 @@ public class UI implements Runnable {
         }
     }
 
+    /**
+     * Sets the home screen.
+     */
+
     private void setHomeFrame() {
         this.homeFrame = new JFrame("HOME SCREEN");
         homeFrame.setLayout(new FlowLayout());
@@ -196,6 +218,10 @@ public class UI implements Runnable {
         homeFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
+    /**
+     * Sets the screen for the player to choose a play mode.
+     */
+
     private void setPlayModeFrame() {
         this.playModeFrame = new JFrame("PLAY MODE");
 
@@ -254,6 +280,10 @@ public class UI implements Runnable {
         playModeFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
+    /**
+     * Handles buttons on the play mode screen.
+     */
+
     private class PlayModeFrameButtonListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -268,6 +298,10 @@ public class UI implements Runnable {
             }
         }
     }
+
+    /**
+     * Sets the screen for the player to enter their name.
+     */
 
     private void setNameFrame() {
         JFrame nameFrame = new JFrame("PLAYER'S NAME");
@@ -337,6 +371,10 @@ public class UI implements Runnable {
         nameFrame.setLocationRelativeTo(null);
         nameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
+
+    /**
+     * Sets the screen for the player to customize their game.
+     */
 
     private void setCustomizeFrame() {
         this.customizeFrame = new JFrame("CUSTOMIZE SCREEN");
@@ -439,6 +477,10 @@ public class UI implements Runnable {
         customizeFrame.setLocationRelativeTo(null);
         customizeFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
+
+    /**
+     * Sets the play screen, either default or customized play mode.
+     */
 
     private void setPlayFrame() {
         this.playFrame = new JFrame("PLAY SCREEN");
@@ -548,6 +590,10 @@ public class UI implements Runnable {
         playFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
+    /**
+     * Sets the game over screen.
+     */
+
     private void setOverFrame() {
         this.overFrame = new JFrame("GAME OVER");
         overFrame.getContentPane().setBackground(new Color(253, 230, 240));
@@ -626,7 +672,12 @@ public class UI implements Runnable {
         overFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
+    /**
+     * Updates the UI when something changes.
+     */
+
     public void update() {
+        // Fills the play grid with new tiles.
         for (int y = 0; y < this.model.getGrid().getRows(); y++) {
             for (int x = 0; x < model.getGrid().getCols(); x++) {
                 JButton tileButton = this.playGrid.get(y).get(x);
@@ -635,20 +686,24 @@ public class UI implements Runnable {
             }
         }
 
+        // Paints the first selection red.
         Point first = model.getSelector().getFirst();
-        if (first != null) {
+        if (first != null)
             playGrid.get(first.y).get(first.x).setBackground(Color.RED);
-        }
 
+        // Updates JLabels.
         this.matchesLabel.setText("Matches: " + model.getGrid().getTotalMatches());
         this.yourScoreLabel.setText(" " + model.getGrid().getTotalScore() + " ");
 
+        // If the game is over.
         if (model.exit()) {
+            // Disables the tiles and closes the play screen.
             for (ArrayList<JButton> al : playGrid)
                 for (JButton button : al)
                     button.setEnabled(false);
             this.playFrame.dispose();
 
+            // Completes the player's profile and updates the leader board.
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
             this.profile.setDateAndTime(sdf.format(new Date(System.currentTimeMillis())));
             profile.setScore(model.getGrid().getTotalScore());
@@ -656,6 +711,8 @@ public class UI implements Runnable {
             LB.writeData();
             LB.readData();
             setOverFrame();
+
+            // Shows messages.
             if (LB.topThree())
                 message("Congratulations!\nYou are in the top 3.\nYour position: #" + LB.getPosition() + ".", "MESSAGE", JOptionPane.INFORMATION_MESSAGE, new ImageIcon("in/images/candycrush.jpg"));
             else
@@ -665,16 +722,20 @@ public class UI implements Runnable {
         playFrame.repaint();
     }
 
-    private static class ImagePanel extends JComponent {
-        private final Image image;  // The image.
+    /**
+     * Loads images as background for JFrames.
+     */
 
-        private ImagePanel(Image image) {	// The constructor.
+    private static class ImagePanel extends JComponent {
+        private final Image image;
+
+        private ImagePanel(Image image) {
             this.image = image;
         }
 
         /**
          * Overrides the paintComponent() method in the JComponent class.
-         * @param g The graphics.
+         * @param g Graphics.
          */
 
         @Override
@@ -683,6 +744,10 @@ public class UI implements Runnable {
             g.drawImage(image, 0, 0, this);
         }
     }
+
+    /**
+     * Handles the event that a tile is selected.
+     */
 
     private static class EventHandler implements ActionListener {
         private final Model model;
@@ -701,6 +766,10 @@ public class UI implements Runnable {
         }
     }
 
+    /**
+     * Returns GridBagConstraints with entered fields.
+     */
+
     private GridBagConstraints gBC(int fill, double weightx, double weighty, int gridx, int gridy, int gridwidth, int gridheight) {
         GridBagConstraints gBC = new GridBagConstraints();
         gBC.fill = fill;
@@ -713,6 +782,11 @@ public class UI implements Runnable {
 
         return gBC;
     }
+
+    /**
+     * Shows an option dialog.
+     * @return Option.
+     */
 
     private int option() {
         UIManager.put("OptionPane.background", new Color(253, 230, 240));
@@ -738,6 +812,14 @@ public class UI implements Runnable {
 
         return n;
     }
+
+    /**
+     * Shows a message dialog.
+     * @param message Message.
+     * @param title Title of the dialog.
+     * @param messageType Message type.
+     * @param icon Image icon.
+     */
 
     private void message(String message, String title, int messageType, ImageIcon icon) {
         UIManager.put("OptionPane.background", new Color(253, 230, 240));
