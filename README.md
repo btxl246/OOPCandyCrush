@@ -25,6 +25,8 @@ Candy Crush is a free-to-play match-three puzzle video game released by King on 
 
 Our project builds on the match-three principle on a simpler level with our own designs. 
 
+See the attached "OOPCandyCrush Project Report" file for the full report.
+
 ## Requirements
 Operating system: Windows.
 
